@@ -1,12 +1,17 @@
 [
   {
     "id": "rev-1",
-    "customerName": "Thảo Vy (DNC)",
+    "customerName": "Thảo Vy",
     "rating": 5,
-    "comment": "Cơm gà sốt tiêu đen ngon xuất sắc, ức gà mềm không bị khô, AI gợi ý combo với trà bí đao hợp túi tiền 44k chuẩn sinh viên!",
+    "comment": "Cơm gà sốt tiêu đen ngon xuất sắc, ức gà mềm không bị khô, AI gợi ý combo với trà bí đao hợp túi tiền 44k giá rất hợp lý!",
     "createdAt": "2026-11-19T11:50:00Z",
     "sentiment": "positive",
-    "keywords": ["ngon xuất sắc", "mềm", "hợp túi tiền", "chuẩn sinh viên"]
+    "keywords": [
+      "ngon xuất sắc",
+      "mềm",
+      "hợp túi tiền",
+      "chuẩn sinh viên"
+    ]
   },
   {
     "id": "rev-2",
@@ -15,7 +20,11 @@
     "comment": "Cơm thịt kho trứng cút đậm vị miền Tây, đóng gói hộp bã mía thân thiện môi trường rất ưng ý. Tuy nhiên shipper giao hơi muộn 5 phút.",
     "createdAt": "2026-11-19T10:30:00Z",
     "sentiment": "mixed",
-    "keywords": ["đậm vị", "hộp bã mía", "giao hơi muộn"]
+    "keywords": [
+      "đậm vị",
+      "hộp bã mía",
+      "giao hơi muộn"
+    ]
   },
   {
     "id": "rev-3",
@@ -24,7 +33,12 @@
     "comment": "Tính năng AI hỏi ngân sách với sở thích quá tiện lợi! Mình ăn chay trường được gợi ý cơm nấm sốt ngũ vị thanh đạm không dầu mỡ.",
     "createdAt": "2026-11-18T18:20:00Z",
     "sentiment": "positive",
-    "keywords": ["AI tiện lợi", "thanh đạm", "không dầu mỡ", "hài lòng"]
+    "keywords": [
+      "AI tiện lợi",
+      "thanh đạm",
+      "không dầu mỡ",
+      "hài lòng"
+    ]
   },
   {
     "id": "rev-4",
@@ -33,7 +47,10 @@
     "comment": "Hôm nay trời mưa cơm đến nơi hơi nguội, sốt tiêu đen hơi cay so với khẩu vị của mình dù lúc nãy quên ghi chú.",
     "createdAt": "2026-11-18T12:45:00Z",
     "sentiment": "negative",
-    "keywords": ["hơi nguội", "quá cay", "trời mưa"]
+    "keywords": [
+      "hơi nguội",
+      "quá cay",
+      "trời mưa"
+    ]
   }
 ]
-

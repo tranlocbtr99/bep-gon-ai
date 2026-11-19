@@ -54,7 +54,7 @@ app.get('/api/inventory', (req, res) => {
 
     if (item.daysToExpire <= 1) {
       riskLevel = 'critical';
-      recommendation = `CẬN DATE: Sử dụng ngay hôm nay hoặc áp dụng Dynamic Pricing giảm giá món dùng ${item.name} để đẩy hàng!`;
+      recommendation = `CẬN DATE: Sử dụng ngay hôm nay hoặc áp dụng Dynamic Pricing giảm giá món dùng ${item.name} để xả kho!`;
     } else if (item.currentStock < item.minStock) {
       riskLevel = 'warning';
       recommendation = `SẮP HẾT: Cần nhập thêm tối thiểu ${(item.minStock - item.currentStock).toFixed(1)} ${item.unit}`;
@@ -81,6 +81,37 @@ app.post('/api/inventory/restock', (req, res) => {
   writeJson('inventory.json', inventory);
 
   res.json({ success: true, message: `Đã nhập thêm ${amount} ${item.unit} ${item.name}`, data: item });
+});
+
+// Duyệt nhập kho tự động từ bảng đề xuất đi chợ
+app.post('/api/inventory/approve-grocery-list', (req, res) => {
+  const { items } = req.body; // array of { ingredientKey, needToBuy }
+  if (!items || !Array.isArray(items)) {
+    return res.status(400).json({ success: false, message: 'Danh sách nguyên liệu không hợp lệ' });
+  }
+
+  const inventory = readJson('inventory.json');
+  let restockedCount = 0;
+
+  items.forEach(reqItem => {
+    if (reqItem.needToBuy > 0) {
+      const invItem = inventory.find(i => i.key === reqItem.ingredientKey);
+      if (invItem) {
+        invItem.currentStock = Number((invItem.currentStock + Number(reqItem.needToBuy)).toFixed(2));
+        invItem.lastRestocked = new Date().toISOString().split('T')[0];
+        invItem.daysToExpire = 3; // Reset hạn dùng cho hàng mới về
+        restockedCount++;
+      }
+    }
+  });
+
+  writeJson('inventory.json', inventory);
+
+  res.json({
+    success: true,
+    message: `Đã duyệt nhập kho thành công ${restockedCount} loại nguyên liệu mới vào hệ thống!`,
+    inventory
+  });
 });
 
 // --------------------------------------------------------------------------
@@ -131,21 +162,27 @@ app.post('/api/orders', (req, res) => {
   });
 
   const now = new Date();
-  const estimatedDelivery = new Date(now.getTime() + 30 * 60000); // +30 phút
+  const estimatedDelivery = new Date(now.getTime() + 25 * 60000); // Giao trong 25 phút
+
+  const orderId = `BG-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${String(orders.length + 1).padStart(3, '0')}`;
+
+  // VietQR Real Banking Information
+  const vietQrUrl = `https://img.vietqr.io/image/MB-0912345678-compact2.png?amount=${totalAmount}&addInfo=${orderId}&accountName=LOCTM%20BEP%20GON%20AI`;
 
   const newOrder = {
-    id: `BG-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${String(orders.length + 1).padStart(2, '0')}`,
+    id: orderId,
     customerName,
     phone: phone || '0901234567',
-    address: address || 'Ký túc xá ĐH Nam Cần Thơ',
+    address: address || '123 Đường 3/2, Ninh Kiều',
     items: detailedItems,
     totalAmount,
     note: note || '',
-    paymentMethod: paymentMethod || 'cod',
-    status: 'cooking', // Mặc định chuyển thẳng bếp nấu để demo nhanh
+    paymentMethod: paymentMethod || 'qr_code',
+    status: 'pending', // Trạng thái thực tế: Chờ bếp duyệt
     createdAt: now.toISOString(),
     estimatedDelivery: estimatedDelivery.toISOString(),
-    aiRecommendationsApplied: !!aiRecommendationsApplied
+    aiRecommendationsApplied: !!aiRecommendationsApplied,
+    paymentQrUrl: vietQrUrl
   };
 
   orders.push(newOrder);
@@ -154,7 +191,7 @@ app.post('/api/orders', (req, res) => {
 
   res.json({
     success: true,
-    message: 'Đặt đơn thành công! Đơn hàng đã chuyển trực tiếp tới bếp.',
+    message: 'Đặt đơn thành công! Bếp Gọn đã nhận đơn và chuẩn bị chế biến.',
     order: newOrder
   });
 });
@@ -208,7 +245,7 @@ app.post('/api/ai/recommend-menu', (req, res) => {
     if (m.price <= budget) {
       score += 30 - (priceDiff / 1000) * 2;
     } else {
-      score -= (priceDiff / 1000) * 10; // Penalty if over budget
+      score -= (priceDiff / 1000) * 10;
     }
 
     // Health/Goal optimization
@@ -278,31 +315,30 @@ app.post('/api/ai/recommend-menu', (req, res) => {
 });
 
 // --------------------------------------------------------------------------
-// 5. HỆ THỐNG AI 2: AI DỰ BÁO NHU CẦU & TÍNH TOÁN NGUYÊN LIỆU ĐI CHỢ (BOM)
+// 5. HỆ THỐNG AI 2: DỰ BÁO NHU CẦU & KẾ HOẠCH ĐI CHỢ TỰ ĐỘNG (BOM)
 // --------------------------------------------------------------------------
 app.post('/api/ai/forecast-demand', (req, res) => {
   const { date, weather = 'sunny', campusEvent = 'regular', expectedStudents = 1200 } = req.body;
   const menu = readJson('menu.json');
   const inventory = readJson('inventory.json');
 
-  // Baseline demand distribution (tỷ trọng dựa trên dữ liệu tiêu dùng sinh viên)
   let baseDemand = {
-    m1: 28, // Cơm gà áp chảo sốt tiêu đen
-    m2: 22, // Cơm thịt kho trứng cút
-    m3: 16, // Cơm cá basa
-    m4: 18, // Cơm sườn non ram
-    m5: 12, // Cơm đậu hũ nhồi nấm (chay)
-    m6: 10, // Cơm xá xíu nấm đông cô (chay)
-    m7: 35, // Canh
-    m8: 40, // Trà bí đao
-    m9: 25  // Sữa bắp non
+    m1: 30, // Cơm gà áp chảo sốt tiêu đen
+    m2: 24, // Cơm thịt kho trứng cút
+    m3: 18, // Cơm cá basa
+    m4: 20, // Cơm sườn non ram
+    m5: 14, // Cơm đậu hũ nhồi nấm (chay)
+    m6: 12, // Cơm xá xíu nấm đông cô (chay)
+    m7: 40, // Canh
+    m8: 45, // Trà bí đao
+    m9: 30  // Sữa bắp non
   };
 
   // Weather impact multiplier
   let weatherMultiplier = 1.0;
-  let weatherNote = 'Thời tiết nắng ráo, sinh viên di chuyển và đặt hàng bình thường.';
+  let weatherNote = 'Thời tiết nắng ráo, khách hàng di chuyển và đặt hàng bình thường.';
   if (weather === 'rainy') {
-    weatherMultiplier = 1.25; // Trời mưa ngại ra ngoài -> Đơn giao tận phòng tăng 25%
+    weatherMultiplier = 1.25;
     weatherNote = 'CẢNH BÁO MƯA: Nhu cầu đặt cơm giao tận phòng KTX và giảng đường tăng mạnh (+25%). Đề xuất tăng suất cơm nóng và canh.';
   } else if (weather === 'hot') {
     weatherMultiplier = 1.1;
@@ -317,10 +353,10 @@ app.post('/api/ai/forecast-demand', (req, res) => {
     eventNote = 'MÙA THI HỌC KỲ: Sinh viên ôn thi tại KTX và thư viện đến trưa, nhu cầu suất ăn tiện lợi bổ não và sữa bắp tăng cao.';
   } else if (campusEvent === 'weekend_holiday') {
     eventMultiplier = 0.55;
-    eventNote = 'CUỐI TUẦN / NGHỈ LỄ: Sinh viên về quê hoặc đi chơi, chỉ giữ công suất tối thiểu 55% để tránh dư thừa lãng phí.';
+    eventNote = 'CUỐI TUẦN / NGHỈ LỄ: Sinh viên về quê hoặc đi chơi, chỉ giữ công suất 55% để tránh dư thừa lãng phí.';
   } else if (campusEvent === 'workshop') {
     eventMultiplier = 1.35;
-    eventNote = 'HỘI THẢO TOÀN TRƯỜNG: Có đoàn đại biểu và sinh viên tham gia, dự kiến đơn đặt theo nhóm tăng đột biến.';
+    eventNote = 'HỘI THẢO TOÀN TRƯỜNG: Có đoàn đại biểu và khách hàng tham gia, dự kiến đơn đặt theo nhóm tăng đột biến.';
   }
 
   const combinedMultiplier = weatherMultiplier * eventMultiplier;
@@ -330,7 +366,6 @@ app.post('/api/ai/forecast-demand', (req, res) => {
     const dish = menu.find(m => m.id === dishId);
     let qty = Math.round(baseQty * combinedMultiplier);
 
-    // Weather adjustments for specific categories
     if (weather === 'hot' && (dishId === 'm8' || dishId === 'm9')) {
       qty = Math.round(qty * 1.3);
     }
@@ -352,7 +387,7 @@ app.post('/api/ai/forecast-demand', (req, res) => {
   const totalBeverages = forecastedItems.filter(i => i.category === 'nuoc' || i.category === 'canh').reduce((sum, i) => sum + i.forecastedQty, 0);
   const projectedRevenue = forecastedItems.reduce((sum, i) => sum + (i.forecastedQty * i.price), 0);
 
-  // Compute Bill Of Materials (BOM) - Tổng nguyên liệu cần đi chợ
+  // Compute Bill Of Materials (BOM)
   const bomSummary = {};
   forecastedItems.forEach(item => {
     if (item.bom) {
@@ -362,7 +397,7 @@ app.post('/api/ai/forecast-demand', (req, res) => {
     }
   });
 
-  // Compare with current inventory to compute SHOPPING LIST (Cần mua bao nhiêu)
+  // Compare with current inventory to compute SHOPPING LIST
   const shoppingList = Object.entries(bomSummary).map(([ingKey, requiredAmount]) => {
     const invItem = inventory.find(i => i.key === ingKey);
     const roundedRequired = Number(requiredAmount.toFixed(2));
@@ -421,7 +456,6 @@ app.post('/api/ai/chat-assistant', (req, res) => {
   let suggestedActions = [];
   let detectedDishes = [];
 
-  // Match items from menu
   menu.forEach(item => {
     const nameLower = item.name.toLowerCase();
     const shortNames = [
@@ -435,7 +469,6 @@ app.post('/api/ai/chat-assistant', (req, res) => {
     }
   });
 
-  // Extract quantity if mentioned (e.g., "2 cơm gà", "3 phần", "1 ly")
   const qtyMatch = lowerMsg.match(/(\d+)\s*(suất|phần|cơm|ly|hộp|dĩa|đĩa)?/);
   const detectedQuantity = qtyMatch ? parseInt(qtyMatch[1], 10) : 1;
 
@@ -443,7 +476,7 @@ app.post('/api/ai/chat-assistant', (req, res) => {
     const budget = lowerMsg.includes('dưới 30') ? 30000 : 35000;
     const affordable = menu.filter(m => m.price <= budget && m.category.startsWith('com'));
     
-    reply = `Dạ Bếp Gọn có các suất ăn ngon dưới ${budget.toLocaleString()}đ phù hợp tiêu chí của bạn nè:\n` +
+    reply = `Bếp Gọn có các suất ăn ngon dưới ${budget.toLocaleString()}đ phù hợp tiêu chí của bạn:\n` +
       affordable.map(m => `• **${m.name}** - ${m.price.toLocaleString()}đ (${m.calories} kcal)`).join('\n') +
       `\n\nBạn muốn chọn món nào để mình thêm vào giỏ hàng ngay giúp bạn?`;
     
@@ -454,7 +487,7 @@ app.post('/api/ai/chat-assistant', (req, res) => {
     }));
   } else if (lowerMsg.includes('không cay')) {
     const nonSpicy = menu.filter(m => !m.isSpicy && m.category.startsWith('com'));
-    reply = `Dạ nếu bạn không ăn cay được thì Bếp Gọn đề xuất các món tuyệt đối không cay, vị ngọt dịu thanh đạm này nhé:\n` +
+    reply = `Nếu bạn không ăn cay được thì Bếp Gọn có các món tuyệt đối không cay, vị ngọt dịu thanh đạm này:\n` +
       nonSpicy.map(m => `• **${m.name}** - ${m.price.toLocaleString()}đ`).join('\n') +
       `\n\nBạn ưng ý món nào nhất nè?`;
     
@@ -465,7 +498,7 @@ app.post('/api/ai/chat-assistant', (req, res) => {
     }));
   } else if (lowerMsg.includes('ăn chay') || lowerMsg.includes('chay')) {
     const vegDishes = menu.filter(m => m.isVegetarian);
-    reply = `Dạ Bếp Gọn có thực đơn Chay Healthy giàu đạm thực vật từ nấm tươi và đậu hũ non cực kỳ thanh đạm:\n` +
+    reply = `Bếp Gọn có thực đơn Chay Healthy giàu đạm thực vật từ nấm tươi và đậu hũ non cực kỳ thanh đạm:\n` +
       vegDishes.map(m => `• **${m.name}** - ${m.price.toLocaleString()}đ`).join('\n');
     
     suggestedActions = vegDishes.map(m => ({
@@ -475,8 +508,8 @@ app.post('/api/ai/chat-assistant', (req, res) => {
     }));
   } else if (detectedDishes.length > 0) {
     const targetDish = detectedDishes[0];
-    reply = `Dạ mình đã nhận diện bạn muốn đặt **${detectedQuantity} phần ${targetDish.name}** (${(targetDish.price * detectedQuantity).toLocaleString()}đ).\n` +
-      `Món này ${targetDish.description}\n` +
+    reply = `Mình đã nhận diện bạn muốn đặt **${detectedQuantity} phần ${targetDish.name}** (${(targetDish.price * detectedQuantity).toLocaleString()}đ).\n` +
+      `Món này: ${targetDish.description}\n` +
       `Mình có thể hỗ trợ thêm ngay vào giỏ hàng của bạn nhé!`;
     
     suggestedActions = [
@@ -493,11 +526,11 @@ app.post('/api/ai/chat-assistant', (req, res) => {
       }
     ];
   } else {
-    reply = `Chào bạn! Mình là AI Trợ lý Bếp Gọn 24/7. Bạn có thể nhắn tự nhiên như:\n` +
+    reply = `Xin chào! Mình là AI Trợ lý Bếp Gọn 24/7. Bạn có thể nhắn tự nhiên như:\n` +
       `• *"Hôm nay có món gì dưới 35k không cay?"*\n` +
       `• *"Tôi muốn ăn chay thanh đạm ít dầu mỡ"*\n` +
       `• *"Đặt giúp tôi 2 cơm gà áp chảo và 1 trà bí đao"*\n` +
-      `Bạn cần mình gợi ý món ăn hôm nay theo ngân sách bao nhiêu nè?`;
+      `Bạn cần mình gợi ý món ăn hôm nay theo ngân sách bao nhiêu?`;
     
     suggestedActions = [
       { action: 'query', label: 'Cơm trưa dưới 35k' },
@@ -523,9 +556,6 @@ app.get('/api/ai/dynamic-pricing', (req, res) => {
   const inventory = readJson('inventory.json');
   const hour = new Date().getHours();
 
-  // Dynamic rule:
-  // Sau 13h trưa hoặc sau 19h tối: món cận date hoặc còn nguyên liệu nhiều giảm giá để clear kho
-  // Khung giờ vàng trưa (11h-12h30): combo ưu đãi
   let currentSlot = 'normal';
   let slotLabel = 'Khung giờ tiêu chuẩn';
   
@@ -541,7 +571,6 @@ app.get('/api/ai/dynamic-pricing', (req, res) => {
     let discountPercent = 0;
     let reason = 'Giá niêm yết chuẩn';
 
-    // Check if dish uses ingredients nearing expiration
     let usesExpiringIng = false;
     if (dish.bom) {
       Object.keys(dish.bom).forEach(k => {
@@ -553,11 +582,11 @@ app.get('/api/ai/dynamic-pricing', (req, res) => {
     }
 
     if (usesExpiringIng) {
-      discountPercent = 15; // Giảm 15% để kích cầu xả hàng cận date, chống lãng phí
-      reason = 'AI Flash Sale: Ưu đãi 15% nguyên liệu đậu hũ tươi chế biến trong ngày!';
+      discountPercent = 15;
+      reason = 'Ưu đãi 15% nguyên liệu đậu hũ tươi chế biến trong ngày!';
     } else if (currentSlot === 'peak_lunch' && dish.id === 'm1') {
       discountPercent = 5;
-      reason = 'Ưu đãi giờ cao điểm trưa cho sinh viên DNC';
+      reason = 'Ưu đãi giờ cao điểm trưa cho khách hàng';
     }
 
     const discountedPrice = Math.round(dish.originalPrice * (1 - discountPercent / 100));
@@ -579,7 +608,7 @@ app.get('/api/ai/dynamic-pricing', (req, res) => {
 });
 
 // --------------------------------------------------------------------------
-// 8. HỆ THỐNG AI 6: SENTIMENT ANALYSIS (PHÂN TÍCH ĐÁNH GIÁ KHÁCH HÀNG)
+// 8. HỆ THỐNG AI 6: PHÂN TÍCH ĐÁNH GIÁ KHÁCH HÀNG
 // --------------------------------------------------------------------------
 app.get('/api/reviews', (req, res) => {
   const reviews = readJson('reviews.json');
@@ -593,7 +622,6 @@ app.post('/api/reviews', (req, res) => {
   const reviews = readJson('reviews.json');
   const lower = comment.toLowerCase();
 
-  // AI Sentiment scoring
   let sentiment = 'positive';
   const posWords = ['ngon', 'tuyệt', 'thích', 'tiện', 'nhanh', 'mềm', 'hài lòng', 'xuất sắc', 'rẻ', 'hợp túi tiền'];
   const negWords = ['dở', 'nguội', 'chậm', 'muộn', 'cay', 'mặn', 'tệ', 'kém', 'thất vọng'];
@@ -609,7 +637,7 @@ app.post('/api/reviews', (req, res) => {
 
   const newReview = {
     id: `rev-${Date.now()}`,
-    customerName: customerName || 'Sinh viên DNC giấu tên',
+    customerName: customerName || 'Khách hàng ẩn danh',
     rating: Number(rating) || 5,
     comment,
     createdAt: new Date().toISOString(),
@@ -622,7 +650,7 @@ app.post('/api/reviews', (req, res) => {
 
   res.json({
     success: true,
-    message: 'Cảm ơn bạn đã gửi đánh giá! AI đã tiếp nhận phản hồi.',
+    message: 'Cảm ơn bạn đã gửi đánh giá! Bếp Gọn đã tiếp nhận phản hồi.',
     review: newReview
   });
 });
@@ -646,39 +674,36 @@ app.get('/api/ai/sentiment-analysis', (req, res) => {
         negative: { count: negative, percentage: total > 0 ? Math.round(negative / total * 100) : 0 }
       },
       actionableInsights: [
-        '92% sinh viên khen ngợi công thức sốt gà áp chảo và tính năng cá nhân hóa thực đơn AI.',
-        'Có phản hồi về việc trời mưa ship bị nguội -> Đề xuất trang bị túi giữ nhiệt cách nhiệt 3 lớp cho đội ngũ shipper.',
-        'Độ cay của sốt tiêu đen cần phân cấp (Không cay / Cay vừa / Cay nhiều) để khách chọn rõ khi đặt.'
+        '92% khách hàng khen ngợi công thức sốt gà áp chảo và tính năng cá nhân hóa thực đơn AI.',
+        'Trời mưa ship có nguy cơ giảm nhiệt độ -> Sử dụng túi giữ nhiệt cách nhiệt 3 lớp khi giao hàng.',
+        'Tùy chọn độ cay của sốt tiêu đen cho phép khách chủ động điều chỉnh khi đặt.'
       ]
     }
   });
 });
 
 // --------------------------------------------------------------------------
-// 9. MÔ PHỎNG TÀI CHÍNH & HOẠCH ĐỊNH RỦI RO (MÔN QUẢN TRỊ HỌC)
+// 9. BÁO CÁO TÀI CHÍNH & PHÂN TÍCH RỦI RO HOẠT ĐỘNG
 // --------------------------------------------------------------------------
 app.post('/api/simulation/financial', (req, res) => {
   const {
-    salesVolumeDropPercent = 0, // % doanh số sụt giảm
-    meatPriceIncreasePercent = 0, // % giá thịt tăng
+    salesVolumeDropPercent = 0,
+    meatPriceIncreasePercent = 0,
     dailyMealsTarget = 150,
     avgSellingPrice = 32000,
-    avgCostOfGoodsSold = 18000, // Chi phí nguyên liệu
-    fixedCostsMonthly = 18000000 // Mặt bằng bếp, điện nước, khấu hao máy móc, lương cứng
+    avgCostOfGoodsSold = 18000,
+    fixedCostsMonthly = 18000000
   } = req.body;
 
-  // Adjusted daily volume
   const actualDailyMeals = Math.round(dailyMealsTarget * (1 - salesVolumeDropPercent / 100));
-  
-  // Adjusted variable cost per meal
   const actualCOGS = Math.round(avgCostOfGoodsSold * (1 + (meatPriceIncreasePercent * 0.6) / 100));
   
-  const unitContributionMargin = avgSellingPrice - actualCOGS; // Số dư đảm phí trên 1 suất
+  const unitContributionMargin = avgSellingPrice - actualCOGS;
   const contributionMarginRatio = unitContributionMargin / avgSellingPrice;
 
   // Điểm hòa vốn (Break-even Point)
   const monthlyBreakEvenMeals = Math.ceil(fixedCostsMonthly / unitContributionMargin);
-  const dailyBreakEvenMeals = Math.ceil(monthlyBreakEvenMeals / 26); // 26 ngày bán/tháng
+  const dailyBreakEvenMeals = Math.ceil(monthlyBreakEvenMeals / 26);
 
   // Dự phóng tài chính 1 tháng (26 ngày)
   const monthlyMealsSold = actualDailyMeals * 26;
@@ -688,16 +713,15 @@ app.post('/api/simulation/financial', (req, res) => {
   const monthlyNetProfit = monthlyRevenue - monthlyTotalCosts;
   const profitMargin = monthlyRevenue > 0 ? (monthlyNetProfit / monthlyRevenue * 100).toFixed(1) + '%' : '0%';
 
-  // Đánh giá mức độ rủi ro Quản trị học
   let riskAssessment = 'An toàn';
-  let contingencyPlan = 'Mô hình hoạt động hiệu quả, biên lợi nhuận tốt.';
+  let contingencyPlan = 'Mô hình hoạt động hiệu quả, biên lợi nhuận ổn định.';
 
   if (monthlyNetProfit <= 0) {
     riskAssessment = 'NGUY HIỂM (LỖ VỐN)';
-    contingencyPlan = 'HÀNH ĐỘNG KHẨN CẤP: Kích hoạt kế hoạch dự phòng: 1) Tăng tỷ trọng món chay/trứng có chi phí thấp; 2) Áp dụng AI định giá linh hoạt bù đắp; 3) Giảm giờ công lao động bán thời gian.';
+    contingencyPlan = 'HÀNH ĐỘNG KHẨN CẤP: Kích hoạt kế hoạch dự phòng: 1) Tăng tỷ trọng món chay/trứng có chi phí thấp; 2) Áp dụng Dynamic Pricing bù đắp; 3) Giảm giờ công lao động bán thời gian.';
   } else if (actualDailyMeals < dailyBreakEvenMeals * 1.15) {
-    riskAssessment = 'CẬNHÒA VỐN';
-    contingencyPlan = 'CẢNH BÁO: Doanh số sát điểm hòa vốn. Cần đẩy mạnh bán combo và hợp tác tổ chức sự kiện tại ĐH Nam Cần Thơ.';
+    riskAssessment = 'CẬN HÒA VỐN';
+    contingencyPlan = 'CẢNH BÁO: Doanh số sát điểm hòa vốn. Đẩy mạnh chương trình combo bữa trưa và gói ăn tuần.';
   }
 
   res.json({
@@ -721,58 +745,10 @@ app.post('/api/simulation/financial', (req, res) => {
   });
 });
 
-// --------------------------------------------------------------------------
-// 10. 3 KỊCH BẢN LIVE DEMO CÀI SẴN (PHỤC VỤ THUYẾT TRÌNH 15 PHÚT)
-// --------------------------------------------------------------------------
-app.get('/api/demo/scenarios', (req, res) => {
-  res.json({
-    success: true,
-    scenarios: [
-      {
-        id: 'scenario_1',
-        name: 'Demo 1: Khách hàng cá nhân hóa thực đơn AI',
-        timeBudget: '2 phút',
-        description: 'Sinh viên có ngân sách 35.000đ, không ăn cay, mục tiêu cân bằng dinh dưỡng. AI tạo ngay thực đơn tuần và gợi ý combo tối ưu.',
-        payload: {
-          budget: 35000,
-          goal: 'balanced',
-          dietary: 'all',
-          allergies: ['tiêu đen'],
-          dislikes: []
-        }
-      },
-      {
-        id: 'scenario_2',
-        name: 'Demo 2: Chủ bếp dự báo nhu cầu & Đi chợ tự động',
-        timeBudget: '3 phút',
-        description: 'Mô phỏng ngày mai trời mưa + mùa thi học kỳ ĐH Nam Cần Thơ. AI tính ra 95 suất ăn và bảng số kg thịt gà, cá, gạo cần mua.',
-        payload: {
-          weather: 'rainy',
-          campusEvent: 'exam_season',
-          expectedStudents: 1500
-        }
-      },
-      {
-        id: 'scenario_3',
-        name: 'Demo 3: Phân tích độ nhạy rủi ro & Điểm hòa vốn',
-        timeBudget: '2.5 phút',
-        description: 'Mô phỏng kịch bản giả định: Doanh số sụt giảm 20%, giá nguyên liệu thịt heo tăng 15%. AI tính toán ngay điểm hòa vốn mới và kích hoạt kịch bản dự phòng.',
-        payload: {
-          salesVolumeDropPercent: 20,
-          meatPriceIncreasePercent: 15,
-          dailyMealsTarget: 150
-        }
-      }
-    ]
-  });
-});
-
 // Start Server
 app.listen(PORT, () => {
   console.log(`=======================================================`);
   console.log(`🚀 BẾP GỌN AI - Smart Food, Smart Living Web App`);
   console.log(`📍 Server đang chạy tại: http://localhost:${PORT}`);
-  console.log(`💡 Mở trình duyệt để trải nghiệm toàn bộ hệ thống!`);
   console.log(`=======================================================`);
 });
-

@@ -3,10 +3,20 @@
     "id": "BG-20261119-01",
     "customerName": "Nguyễn Văn An",
     "phone": "0912345678",
-    "address": "Ký túc xá Đại học Nam Cần Thơ, Phòng 304",
+    "address": "Ký túc xá Toà nhà Sunrise Tower, Phòng 304",
     "items": [
-      { "id": "m1", "name": "Cơm gà áp chảo sốt tiêu đen", "price": 32000, "quantity": 2 },
-      { "id": "m8", "name": "Trà bí đao hạt chia thanh lọc", "price": 12000, "quantity": 1 }
+      {
+        "id": "m1",
+        "name": "Cơm gà áp chảo sốt tiêu đen",
+        "price": 32000,
+        "quantity": 2
+      },
+      {
+        "id": "m8",
+        "name": "Trà bí đao hạt chia thanh lọc",
+        "price": 12000,
+        "quantity": 1
+      }
     ],
     "totalAmount": 76000,
     "note": "Xin thêm ít dưa leo và sốt tiêu nhé",
@@ -20,10 +30,20 @@
     "id": "BG-20261119-02",
     "customerName": "Lê Thị Mai",
     "phone": "0987654321",
-    "address": "Khoa Kinh tế - ĐH Nam Cần Thơ, Giảng đường E2",
+    "address": "Khoa Kinh tế - Trung tâm dịch vụ, Giảng đường E2",
     "items": [
-      { "id": "m5", "name": "Cơm đậu hũ nhồi nấm sốt tương (Chay)", "price": 28000, "quantity": 1 },
-      { "id": "m9", "name": "Sữa bắp non Cần Thơ nguyên chất", "price": 15000, "quantity": 1 }
+      {
+        "id": "m5",
+        "name": "Cơm đậu hũ nhồi nấm sốt tương (Chay)",
+        "price": 28000,
+        "quantity": 1
+      },
+      {
+        "id": "m9",
+        "name": "Sữa bắp non nguyên chất",
+        "price": 15000,
+        "quantity": 1
+      }
     ],
     "totalAmount": 43000,
     "note": "Giao trước 11h45 giúp mình để kịp học",
@@ -39,8 +59,18 @@
     "phone": "0905123456",
     "address": "Hẻm 51 đường 3/2, Phường An Khánh, Ninh Kiều",
     "items": [
-      { "id": "m2", "name": "Cơm thịt kho trứng cút Nam Bộ", "price": 30000, "quantity": 3 },
-      { "id": "m7", "name": "Canh rong biển thịt bằm dinh dưỡng", "price": 10000, "quantity": 3 }
+      {
+        "id": "m2",
+        "name": "Cơm thịt kho trứng cút Nam Bộ",
+        "price": 30000,
+        "quantity": 3
+      },
+      {
+        "id": "m7",
+        "name": "Canh rong biển thịt bằm dinh dưỡng",
+        "price": 10000,
+        "quantity": 3
+      }
     ],
     "totalAmount": 120000,
     "note": "Cơm nhóm học tập, giao cùng lúc",
@@ -54,9 +84,14 @@
     "id": "BG-20261118-88",
     "customerName": "Võ Hoàng Nam",
     "phone": "0939112233",
-    "address": "Cổng B ĐH Nam Cần Thơ",
+    "address": "Cổng B Trung tâm dịch vụ",
     "items": [
-      { "id": "m3", "name": "Cơm cá basa phi lê sốt cà chua", "price": 32000, "quantity": 1 }
+      {
+        "id": "m3",
+        "name": "Cơm cá basa phi lê sốt cà chua",
+        "price": 32000,
+        "quantity": 1
+      }
     ],
     "totalAmount": 32000,
     "note": "Không cay",
@@ -67,4 +102,3 @@
     "aiRecommendationsApplied": true
   }
 ]
-

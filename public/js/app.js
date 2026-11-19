@@ -1,5 +1,6 @@
 // =========================================================================
-// BẾP GỌN AI - CLIENT-SIDE LOGIC & PRESENTATION SUITE
+// BẾP GỌN AI - CLIENT-SIDE LOGIC & REAL PRODUCTION SUITE
+// Bản quyền & Phát triển bởi: LocTM (https://ltmprofile.pages.dev/)
 // =========================================================================
 
 let state = {
@@ -12,6 +13,7 @@ let state = {
   activeCustomerTab: 'menu',
   activeAdminTab: 'forecast',
   selectedRating: 5,
+  lastForecastData: null,
   charts: {
     forecast: null,
     sentiment: null
@@ -37,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Helper for Lucide icons refresh
 function refreshIcons() {
   setTimeout(() => {
     if (window.lucide) lucide.createIcons();
@@ -45,7 +46,7 @@ function refreshIcons() {
 }
 
 // -------------------------------------------------------------------------
-// VIEW MODE SWITCHING (Customer vs Admin)
+// VIEW MODE SWITCHING (Customer vs Kitchen Admin)
 // -------------------------------------------------------------------------
 function switchViewMode(mode) {
   state.currentMode = mode;
@@ -65,7 +66,6 @@ function switchViewMode(mode) {
     btnAdm.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm bg-white text-slate-900 border border-slate-200/80';
     btnCust.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-slate-800';
     
-    // Refresh admin data & charts
     loadAdminOrders();
     loadInventory();
     setTimeout(() => {
@@ -177,26 +177,22 @@ function renderMenu(items) {
     return `
       <div class="dish-card bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-sm flex flex-col justify-between group">
         <div>
-          <!-- Dish Image -->
           <div class="relative h-48 overflow-hidden bg-slate-100">
             <img src="${dish.image}" alt="${dish.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
             <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent"></div>
             
-            <!-- Badges -->
             <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
               ${dish.isVegetarian ? `<span class="bg-emerald-600/90 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full backdrop-blur-md">Chay Healthy</span>` : ''}
               ${dish.isSpicy ? `<span class="bg-rose-600/90 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full backdrop-blur-md">Vị Cay Tiêu</span>` : ''}
               ${isDiscounted ? `<span class="bg-amber-500 text-slate-950 text-[10px] font-black px-2.5 py-1 rounded-full shadow-lg animate-pulse">GIẢM -${dish.discountPercent}%</span>` : ''}
             </div>
 
-            <!-- Calories Badge -->
             <div class="absolute bottom-3 right-3 bg-slate-900/80 backdrop-blur-md text-white text-[11px] font-bold px-2 py-0.5 rounded-lg flex items-center gap-1">
               <i data-lucide="flame" class="w-3.5 h-3.5 text-amber-400"></i>
               <span>${dish.calories} kcal</span>
             </div>
           </div>
 
-          <!-- Dish Info -->
           <div class="p-5 space-y-3">
             <div class="flex items-start justify-between gap-2">
               <h3 class="font-extrabold text-sm text-slate-900 leading-snug group-hover:text-brand-600 transition">${dish.name}</h3>
@@ -204,7 +200,6 @@ function renderMenu(items) {
             
             <p class="text-xs text-slate-500 leading-relaxed line-clamp-2">${dish.description}</p>
             
-            <!-- Nutrition Macros -->
             <div class="flex items-center gap-2 text-[10px] text-slate-500 font-medium bg-slate-50 p-2 rounded-xl">
               <span>Đạm: <b class="text-slate-800">${dish.protein}g</b></span>
               <span>•</span>
@@ -221,7 +216,6 @@ function renderMenu(items) {
           </div>
         </div>
 
-        <!-- Action / Price Footer -->
         <div class="p-5 pt-0 flex items-center justify-between border-t border-slate-100 mt-2">
           <div>
             <div class="flex items-baseline gap-1.5">
@@ -378,7 +372,7 @@ async function submitOrder() {
   const payment = document.getElementById('order-payment').value;
 
   if (!name || !phone) {
-    alert('Vui lòng nhập tên và số điện thoại liên hệ!');
+    alert('Vui lòng nhập họ tên và số điện thoại giao hàng!');
     return;
   }
 
@@ -400,7 +394,6 @@ async function submitOrder() {
     const result = await res.json();
 
     if (result.success) {
-      // Confetti celebration
       if (window.confetti) {
         confetti({
           particleCount: 100,
@@ -412,9 +405,14 @@ async function submitOrder() {
       state.cart = [];
       saveLocalCart();
       toggleCartDrawer();
-      showToast(`🎉 Đặt đơn thành công! Mã đơn: ${result.order.id}`);
 
-      // Refresh admin kanban and inventory immediately
+      // Show Payment Modal with VietQR if QR code payment selected
+      if (payment === 'qr_code' && result.order.paymentQrUrl) {
+        showPaymentModal(result.order);
+      } else {
+        showToast(`🎉 Đặt đơn thành công! Mã đơn: ${result.order.id}`);
+      }
+
       loadAdminOrders();
       loadInventory();
     } else {
@@ -424,6 +422,18 @@ async function submitOrder() {
     console.error('Lỗi đặt đơn:', err);
     alert('Không thể kết nối đến máy chủ.');
   }
+}
+
+function showPaymentModal(order) {
+  document.getElementById('modal-qr-image').src = order.paymentQrUrl;
+  document.getElementById('modal-order-id').textContent = order.id;
+  document.getElementById('modal-order-amount').textContent = `${order.totalAmount.toLocaleString()}đ`;
+  document.getElementById('payment-modal-overlay').classList.remove('hidden');
+}
+
+function closePaymentModal() {
+  document.getElementById('payment-modal-overlay').classList.add('hidden');
+  showToast('Cảm ơn bạn! Đơn hàng đã được chuyển tới bếp để chế biến.');
 }
 
 // -------------------------------------------------------------------------
@@ -500,7 +510,6 @@ function renderAIWizardResults(data) {
     </div>
   `;
 
-  // 7-day plan table
   const tbody = document.getElementById('wizard-week-tbody');
   tbody.innerHTML = data.weekPlan.map(item => `
     <tr class="hover:bg-slate-50 transition">
@@ -511,7 +520,7 @@ function renderAIWizardResults(data) {
       <td class="py-3 px-3 font-bold text-brand-600">${item.price.toLocaleString()}đ</td>
       <td class="py-3 px-3 text-right">
         <button onclick="addToCart('${item.dishId}')" class="px-3 py-1 rounded-lg bg-slate-100 hover:bg-brand-600 hover:text-white font-bold text-[11px] transition">
-          Chọn ngày này
+          Chọn món ngày này
         </button>
       </td>
     </tr>
@@ -544,7 +553,6 @@ async function sendChatMessage() {
 
   const chatContainer = document.getElementById('chat-messages');
 
-  // Render User Message
   chatContainer.innerHTML += `
     <div class="flex items-start gap-3 justify-end">
       <div class="bg-brand-600 text-white p-3.5 rounded-2xl rounded-tr-none text-xs leading-relaxed max-w-lg shadow-sm">
@@ -556,7 +564,6 @@ async function sendChatMessage() {
   input.value = '';
   chatContainer.scrollTop = chatContainer.scrollHeight;
 
-  // Typing indicator
   const typingId = `typing-${Date.now()}`;
   chatContainer.innerHTML += `
     <div id="${typingId}" class="flex items-start gap-3">
@@ -620,7 +627,7 @@ function clearChat() {
 }
 
 // -------------------------------------------------------------------------
-// 5. HỆ THỐNG AI 2: AI DỰ BÁO NHU CẦU & BẢNG ĐI CHỢ TỰ ĐỘNG (BOM)
+// 5. HỆ THỐNG AI 2: DỰ BÁO NHU CẦU & BẢNG ĐI CHỢ TỰ ĐỘNG (BOM)
 // -------------------------------------------------------------------------
 async function runDemandForecast() {
   const weather = document.getElementById('forecast-weather').value;
@@ -636,26 +643,25 @@ async function runDemandForecast() {
     const result = await res.json();
 
     if (result.success) {
+      state.lastForecastData = result.data;
       renderForecastData(result.data);
     }
   } catch (err) {
-    console.error('Lỗi chạy AI dự báo:', err);
+    console.error('Lỗi chạy dự báo:', err);
   }
 }
 
 function renderForecastData(data) {
-  // Render insights
   const insightsList = document.getElementById('forecast-insights-list');
   insightsList.innerHTML = data.insights.map(i => `<div>• ${i}</div>`).join('');
 
-  // Render metrics
   document.getElementById('metric-forecast-meals').textContent = `${data.metrics.totalMealsForecasted} suất`;
   document.getElementById('metric-forecast-drinks').textContent = `${data.metrics.totalBeveragesForecasted} phần`;
   document.getElementById('metric-forecast-revenue').textContent = `${data.metrics.projectedRevenue.toLocaleString()}đ`;
   document.getElementById('metric-forecast-cogs').textContent = `${data.metrics.totalGroceryCost.toLocaleString()}đ`;
   document.getElementById('metric-forecast-profit').textContent = `${data.metrics.projectedGrossProfit.toLocaleString()}đ (${data.metrics.projectedMargin})`;
 
-  document.getElementById('bom-total-buy-cost').innerHTML = `Tổng tiền cần đi chợ: <span class="text-rose-600 font-extrabold text-sm">${data.metrics.totalGroceryCost.toLocaleString()}đ</span>`;
+  document.getElementById('bom-total-buy-cost').innerHTML = `Tổng tiền đi chợ: <span class="text-rose-600 font-extrabold text-sm">${data.metrics.totalGroceryCost.toLocaleString()}đ</span>`;
 
   // Render Chart
   const ctx = document.getElementById('forecastChart').getContext('2d');
@@ -671,7 +677,7 @@ function renderForecastData(data) {
     data: {
       labels,
       datasets: [{
-        label: 'Số lượng suất ăn dự báo',
+        label: 'Số suất dự báo',
         data: quantities,
         backgroundColor: '#10b981',
         borderRadius: 8
@@ -690,7 +696,7 @@ function renderForecastData(data) {
     }
   });
 
-  // Render Shopping List (BOM)
+  // Render Shopping List
   const tbody = document.getElementById('bom-table-tbody');
   tbody.innerHTML = data.shoppingList.map(item => {
     const isNeedBuy = item.status === 'need_purchase';
@@ -701,7 +707,7 @@ function renderForecastData(data) {
         <td class="py-3 px-3 text-slate-500">${item.currentStock} ${item.unit}</td>
         <td class="py-3 px-3">
           ${isNeedBuy 
-            ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-black bg-rose-100 text-rose-700">Mua +${item.needToBuy} ${item.unit}</span>`
+            ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-black bg-rose-100 text-rose-700">Cần mua +${item.needToBuy} ${item.unit}</span>`
             : `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">Đủ trong kho</span>`}
         </td>
         <td class="py-3 px-3 text-slate-500">${item.costPerUnit.toLocaleString()}đ/${item.unit}</td>
@@ -715,8 +721,45 @@ function renderForecastData(data) {
   refreshIcons();
 }
 
+// DUYỆT NHẬP KHO TỰ ĐỘNG
+async function approveGroceryList() {
+  if (!state.lastForecastData || !state.lastForecastData.shoppingList) {
+    alert('Vui lòng tính toán bảng dự báo trước!');
+    return;
+  }
+
+  const itemsToBuy = state.lastForecastData.shoppingList.filter(i => i.needToBuy > 0);
+  if (itemsToBuy.length === 0) {
+    alert('Kho hiện tại đã đủ toàn bộ nguyên liệu, không cần nhập thêm!');
+    return;
+  }
+
+  if (!confirm(`Xác nhận duyệt nhập kho tự động cho ${itemsToBuy.length} loại nguyên liệu với tổng giá trị ${state.lastForecastData.metrics.totalGroceryCost.toLocaleString()}đ?`)) {
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/inventory/approve-grocery-list', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: itemsToBuy })
+    });
+    const result = await res.json();
+
+    if (result.success) {
+      showToast(`✅ ${result.message}`);
+      loadInventory();
+      runDemandForecast();
+    } else {
+      alert(result.message || 'Lỗi nhập kho');
+    }
+  } catch (err) {
+    console.error('Lỗi duyệt nhập kho:', err);
+  }
+}
+
 // -------------------------------------------------------------------------
-// 6. ADMIN: ORDER KANBAN & INVENTORY MONITOR (HỆ THỐNG AI 4)
+// 6. KITCHEN ORDER KANBAN & INVENTORY MONITOR
 // -------------------------------------------------------------------------
 async function loadAdminOrders() {
   try {
@@ -768,11 +811,10 @@ function renderKanban(orders) {
         <div class="flex items-center justify-between pt-1">
           <span class="font-black text-brand-600 text-xs">${order.totalAmount.toLocaleString()}đ</span>
           
-          <!-- State changer button -->
           <div class="flex items-center gap-1">
-            ${order.status === 'pending' ? `<button onclick="updateOrderStatus('${order.id}', 'cooking')" class="px-2 py-1 bg-blue-600 text-white rounded-lg text-[10px] font-bold">Nấu bếp</button>` : ''}
-            ${order.status === 'cooking' ? `<button onclick="updateOrderStatus('${order.id}', 'delivering')" class="px-2 py-1 bg-purple-600 text-white rounded-lg text-[10px] font-bold">Giao hàng</button>` : ''}
-            ${order.status === 'delivering' ? `<button onclick="updateOrderStatus('${order.id}', 'completed')" class="px-2 py-1 bg-emerald-600 text-white rounded-lg text-[10px] font-bold">Hoàn tất</button>` : ''}
+            ${order.status === 'pending' ? `<button onclick="updateOrderStatus('${order.id}', 'cooking')" class="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[10px] font-bold">Duyệt nấu</button>` : ''}
+            ${order.status === 'cooking' ? `<button onclick="updateOrderStatus('${order.id}', 'delivering')" class="px-2 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-[10px] font-bold">Giao hàng</button>` : ''}
+            ${order.status === 'delivering' ? `<button onclick="updateOrderStatus('${order.id}', 'completed')" class="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-bold">Hoàn tất</button>` : ''}
           </div>
         </div>
       </div>
@@ -799,7 +841,7 @@ async function updateOrderStatus(id, newStatus) {
     const result = await res.json();
     if (result.success) {
       loadAdminOrders();
-      showToast(`Đã chuyển đơn ${id} sang trạng thái: ${newStatus}`);
+      showToast(`Đã cập nhật trạng thái đơn ${id}`);
     }
   } catch (err) {
     console.error('Lỗi cập nhật trạng thái đơn:', err);
@@ -852,7 +894,7 @@ function renderInventoryTable(items) {
 }
 
 async function promptRestock(id, name, unit) {
-  const amount = prompt(`Nhập số lượng ${unit} ${name} muốn nhập thêm vào kho:`, '5');
+  const amount = prompt(`Nhập số lượng ${unit} ${name} muốn nhập thêm:`, '5');
   if (amount && !isNaN(amount) && Number(amount) > 0) {
     try {
       const res = await fetch('/api/inventory/restock', {
@@ -864,7 +906,7 @@ async function promptRestock(id, name, unit) {
       if (result.success) {
         showToast(result.message);
         loadInventory();
-        runDemandForecast(); // recalculate shopping list
+        runDemandForecast();
       }
     } catch (e) {
       console.error(e);
@@ -873,12 +915,12 @@ async function promptRestock(id, name, unit) {
 }
 
 // -------------------------------------------------------------------------
-// 7. HOẠCH ĐỊNH TÀI CHÍNH & MÔ PHỎNG RỦI RO (MÔN QUẢN TRỊ HỌC - BÀI 4)
+// 7. BÁO CÁO TÀI CHÍNH & PHÂN TÍCH HIỆU QUẢ HOẠT ĐỘNG
 // -------------------------------------------------------------------------
 function updateSimSliderVal(type, val) {
   if (type === 'sales-drop') document.getElementById('sim-sales-drop-val').textContent = `${val}%`;
   if (type === 'meat-price') document.getElementById('sim-meat-price-val').textContent = `${val}%`;
-  if (type === 'meals-target') document.getElementById('sim-meals-target-val').textContent = `${val} suất`;
+  if (type === 'meals-target') document.getElementById('sim-meals-target-val').textContent = `${val} suất/ngày`;
   runFinancialSimulation();
 }
 
@@ -899,7 +941,7 @@ async function runFinancialSimulation() {
       renderSimulationResults(result.data.metrics);
     }
   } catch (err) {
-    console.error('Lỗi tính toán mô phỏng:', err);
+    console.error('Lỗi tính toán tài chính:', err);
   }
 }
 
@@ -927,7 +969,7 @@ function renderSimulationResults(m) {
     </div>
 
     <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-1">
-      <span class="text-[11px] font-bold text-slate-400 uppercase">Mức độ rủi ro Quản trị</span>
+      <span class="text-[11px] font-bold text-slate-400 uppercase">Đánh giá rủi ro</span>
       <div class="text-lg font-black ${isLoss ? 'text-rose-600' : 'text-emerald-600'}">${m.riskAssessment}</div>
       <p class="text-[11px] text-slate-500">Định phí: ${(m.fixedCostsMonthly / 1000000).toFixed(1)} triệu/tháng</p>
     </div>
@@ -937,7 +979,7 @@ function renderSimulationResults(m) {
   actionBox.innerHTML = `
     <div class="flex items-center gap-2 font-extrabold text-sm ${isLoss ? 'text-rose-700' : 'text-slate-900'}">
       <i data-lucide="shield-alert" class="w-5 h-5"></i>
-      <span>Kế Hoạch Quản Trị Dự Phòng (Contingency Action Plan - Chức Năng Hoạch Định):</span>
+      <span>Kế Hoạch Quản Trị Dự Phòng Vận Hành:</span>
     </div>
     <div class="text-xs leading-relaxed text-slate-700 bg-slate-50 p-4 rounded-2xl border border-slate-200">
       ${m.contingencyPlan}
@@ -948,7 +990,7 @@ function renderSimulationResults(m) {
 }
 
 // -------------------------------------------------------------------------
-// 8. HỆ THỐNG AI 6: REVIEWS & SENTIMENT ANALYSIS
+// 8. ĐÁNH GIÁ & PHÂN TÍCH CẢM XÚC KHÁCH HÀNG
 // -------------------------------------------------------------------------
 function setRating(val) {
   state.selectedRating = val;
@@ -1035,7 +1077,6 @@ async function loadSentimentAnalysis() {
     if (data.success) {
       const d = data.data;
       
-      // Update Doughnut Chart
       const ctx = document.getElementById('sentimentChart')?.getContext('2d');
       if (ctx) {
         if (state.charts.sentiment) state.charts.sentiment.destroy();
@@ -1060,7 +1101,6 @@ async function loadSentimentAnalysis() {
         });
       }
 
-      // Insights
       const container = document.getElementById('sentiment-insights-container');
       if (container) {
         container.innerHTML = d.actionableInsights.map(insight => `
@@ -1073,42 +1113,6 @@ async function loadSentimentAnalysis() {
     }
   } catch (err) {
     console.error('Lỗi tải Sentiment Insights:', err);
-  }
-}
-
-// -------------------------------------------------------------------------
-// 9. 3 KỊCH BẢN LIVE DEMO (15 PHÚT THUYẾT TRÌNH TRÊN LỚP)
-// -------------------------------------------------------------------------
-function runScenario(id) {
-  if (id === 'scenario_1') {
-    // Demo 1: Customer Personalization
-    switchViewMode('customer');
-    switchCustomerTab('ai-wizard');
-    document.getElementById('wizard-budget').value = 35000;
-    updateBudgetDisplay(35000);
-    document.getElementById('wizard-goal').value = 'balanced';
-    document.getElementById('wizard-allergies').value = 'tiêu đen';
-    generateAIRecommendation();
-    showToast('⚡ Đã kích hoạt Kịch bản Demo 1: Khách hàng AI cá nhân hóa 35k không cay!');
-  } else if (id === 'scenario_2') {
-    // Demo 2: Kitchen Forecast & Grocery Shopping
-    switchViewMode('admin');
-    switchAdminTab('forecast');
-    document.getElementById('forecast-weather').value = 'rainy';
-    document.getElementById('forecast-event').value = 'exam_season';
-    document.getElementById('forecast-students').value = 1500;
-    runDemandForecast();
-    showToast('⚡ Đã kích hoạt Kịch bản Demo 2: Dự báo thời tiết mưa + Mùa thi Cần Thơ!');
-  } else if (id === 'scenario_3') {
-    // Demo 3: Financial Simulation & What-If Planning
-    switchViewMode('admin');
-    switchAdminTab('simulation');
-    document.getElementById('sim-sales-drop').value = 20;
-    document.getElementById('sim-meat-price').value = 15;
-    document.getElementById('sim-sales-drop-val').textContent = '20%';
-    document.getElementById('sim-meat-price-val').textContent = '15%';
-    runFinancialSimulation();
-    showToast('⚡ Đã kích hoạt Kịch bản Demo 3: Mô phỏng rủi ro Doanh số giảm 20%, Giá thịt tăng 15%!');
   }
 }
 
@@ -1137,4 +1141,3 @@ function showToast(message) {
     toast.classList.add('translate-y-20', 'opacity-0');
   }, 3500);
 }
-
