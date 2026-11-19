@@ -424,6 +424,12 @@ app.post('/api/ai/forecast-demand', (req, res) => {
 
   const totalGroceryCost = shoppingList.reduce((sum, i) => sum + i.estimatedCost, 0);
 
+  // Tính toán Điểm hòa vốn tác nghiệp ngày (Daily Break-even)
+  const fixedCostPerDay = Math.round(18000000 / 26); // 692,308đ/ngày
+  const avgContributionPerMeal = totalMeals > 0 ? (projectedRevenue - totalGroceryCost) / totalMeals : 14000;
+  const dailyBreakEvenMeals = Math.ceil(fixedCostPerDay / (avgContributionPerMeal > 0 ? avgContributionPerMeal : 14000));
+  const bepDifference = totalMeals - dailyBreakEvenMeals;
+
   res.json({
     success: true,
     data: {
@@ -437,7 +443,10 @@ app.post('/api/ai/forecast-demand', (req, res) => {
         projectedRevenue,
         totalGroceryCost,
         projectedGrossProfit: projectedRevenue - totalGroceryCost,
-        projectedMargin: projectedRevenue > 0 ? ((projectedRevenue - totalGroceryCost) / projectedRevenue * 100).toFixed(1) + '%' : '0%'
+        projectedMargin: projectedRevenue > 0 ? ((projectedRevenue - totalGroceryCost) / projectedRevenue * 100).toFixed(1) + '%' : '0%',
+        dailyBreakEvenMeals,
+        bepDifference,
+        bepStatus: bepDifference >= 0 ? 'surplus' : 'deficit'
       },
       shoppingList
     }
@@ -683,7 +692,7 @@ app.get('/api/ai/sentiment-analysis', (req, res) => {
 });
 
 // --------------------------------------------------------------------------
-// 9. BÁO CÁO TÀI CHÍNH & PHÂN TÍCH RỦI RO HOẠT ĐỘNG
+// 9. BÁO CÁO TÀI CHÍNH & MÁY TÍNH ĐIỂM HÒA VỐN (BREAK-EVEN POINT - BEP)
 // --------------------------------------------------------------------------
 app.post('/api/simulation/financial', (req, res) => {
   const {
@@ -695,51 +704,98 @@ app.post('/api/simulation/financial', (req, res) => {
     fixedCostsMonthly = 18000000
   } = req.body;
 
-  const actualDailyMeals = Math.round(dailyMealsTarget * (1 - salesVolumeDropPercent / 100));
-  const actualCOGS = Math.round(avgCostOfGoodsSold * (1 + (meatPriceIncreasePercent * 0.6) / 100));
+  const actualDailyMeals = Math.max(0, Math.round(Number(dailyMealsTarget) * (1 - Number(salesVolumeDropPercent) / 100)));
+  const actualCOGS = Math.max(1000, Math.round(Number(avgCostOfGoodsSold) * (1 + (Number(meatPriceIncreasePercent) * 0.6) / 100)));
+  const sellingPrice = Number(avgSellingPrice) || 32000;
+  const fixedCost = Number(fixedCostsMonthly) || 18000000;
   
-  const unitContributionMargin = avgSellingPrice - actualCOGS;
-  const contributionMarginRatio = unitContributionMargin / avgSellingPrice;
+  const unitContributionMargin = sellingPrice - actualCOGS;
+  const contributionMarginRatio = sellingPrice > 0 ? (unitContributionMargin / sellingPrice) : 0;
 
   // Điểm hòa vốn (Break-even Point)
-  const monthlyBreakEvenMeals = Math.ceil(fixedCostsMonthly / unitContributionMargin);
-  const dailyBreakEvenMeals = Math.ceil(monthlyBreakEvenMeals / 26);
+  const monthlyBreakEvenMeals = unitContributionMargin > 0 ? Math.ceil(fixedCost / unitContributionMargin) : 9999;
+  const dailyBreakEvenMeals = unitContributionMargin > 0 ? Math.ceil(monthlyBreakEvenMeals / 26) : 999;
+  const dailyBreakEvenRevenue = dailyBreakEvenMeals * sellingPrice;
+  const monthlyBreakEvenRevenue = monthlyBreakEvenMeals * sellingPrice;
 
-  // Dự phóng tài chính 1 tháng (26 ngày)
+  // Dự phóng tài chính 1 tháng (26 ngày hoạt động)
   const monthlyMealsSold = actualDailyMeals * 26;
-  const monthlyRevenue = monthlyMealsSold * avgSellingPrice;
+  const monthlyRevenue = monthlyMealsSold * sellingPrice;
   const monthlyVariableCosts = monthlyMealsSold * actualCOGS;
-  const monthlyTotalCosts = monthlyVariableCosts + fixedCostsMonthly;
+  const monthlyTotalCosts = monthlyVariableCosts + fixedCost;
   const monthlyNetProfit = monthlyRevenue - monthlyTotalCosts;
   const profitMargin = monthlyRevenue > 0 ? (monthlyNetProfit / monthlyRevenue * 100).toFixed(1) + '%' : '0%';
 
-  let riskAssessment = 'An toàn';
-  let contingencyPlan = 'Mô hình hoạt động hiệu quả, biên lợi nhuận ổn định.';
+  // Độ an toàn vượt điểm hòa vốn (Margin of Safety)
+  const marginOfSafetyMeals = actualDailyMeals - dailyBreakEvenMeals;
+  const marginOfSafetyPercent = actualDailyMeals > 0 ? ((marginOfSafetyMeals / actualDailyMeals) * 100).toFixed(1) + '%' : '0%';
 
-  if (monthlyNetProfit <= 0) {
-    riskAssessment = 'NGUY HIỂM (LỖ VỐN)';
-    contingencyPlan = 'HÀNH ĐỘNG KHẨN CẤP: Kích hoạt kế hoạch dự phòng: 1) Tăng tỷ trọng món chay/trứng có chi phí thấp; 2) Áp dụng Dynamic Pricing bù đắp; 3) Giảm giờ công lao động bán thời gian.';
-  } else if (actualDailyMeals < dailyBreakEvenMeals * 1.15) {
-    riskAssessment = 'CẬN HÒA VỐN';
-    contingencyPlan = 'CẢNH BÁO: Doanh số sát điểm hòa vốn. Đẩy mạnh chương trình combo bữa trưa và gói ăn tuần.';
+  let riskAssessment = 'An toàn';
+  let contingencyPlan = 'Mô hình hoạt động hiệu quả, công suất vượt xa điểm hòa vốn.';
+
+  if (unitContributionMargin <= 0) {
+    riskAssessment = 'NGUY HIỂM CỰC ĐỘ (LỖ TRÊN TỪNG SUẤT)';
+    contingencyPlan = 'BÁO ĐỘNG ĐỎ: Chi phí mỗi suất ăn đang cao hơn giá bán! Cần tăng giá bán hoặc điều chỉnh định lượng khẩu phần ngay lập tức.';
+  } else if (monthlyNetProfit <= 0 || actualDailyMeals < dailyBreakEvenMeals) {
+    riskAssessment = 'NGUY HIỂM (DƯỚI ĐIỂM HÒA VỐN)';
+    contingencyPlan = `HÀNH ĐỘNG KHẨN CẤP: Bếp đang thiếu ${Math.abs(marginOfSafetyMeals)} suất/ngày để hòa vốn (Lỗ dự kiến ${Math.abs(monthlyNetProfit).toLocaleString()}đ/tháng). Cần kích hoạt ngay: 1) Kế hoạch flash sale giờ vàng và bán combo cơm + nước; 2) Đẩy mạnh món chay tỷ suất lãi cao; 3) Tối ưu ca kíp làm việc để giảm định phí.`;
+  } else if (actualDailyMeals < dailyBreakEvenMeals * 1.2) {
+    riskAssessment = 'CẬN BIÊN HÒA VỐN (RỦI RO CAO)';
+    contingencyPlan = `CẢNH BÁO NHẠY CẢM: Doanh số chỉ cách điểm hòa vốn ${marginOfSafetyMeals} suất/ngày (${marginOfSafetyPercent}). Bếp rất nhạy cảm với biến động giá thịt hoặc thời tiết xấu. Cần ký hợp đồng giá sỉ nguyên liệu dài hạn và mở rộng khách hàng KTX.`;
+  } else {
+    riskAssessment = 'VÙNG AN TOÀN SINH LỜI CAO';
+    contingencyPlan = `VẬN HÀNH TỐI ƯU: Vượt điểm hòa vốn +${marginOfSafetyMeals} suất/ngày (+${marginOfSafetyPercent}). Lợi nhuận ròng hàng tháng ước đạt ${monthlyNetProfit.toLocaleString()}đ (Biên LN: ${profitMargin}). Khả năng chống chịu rủi ro biến động giá nguyên liệu rất tốt.`;
+  }
+
+  // Tọa độ biểu đồ điểm hòa vốn (Chart Points)
+  const dailyFixedCost = Math.round(fixedCost / 26);
+  const maxMealRange = Math.max(actualDailyMeals * 1.6, dailyBreakEvenMeals * 1.6, 200);
+  const step = Math.max(10, Math.ceil(maxMealRange / 6));
+  const chartPoints = [];
+  for (let q = 0; q <= maxMealRange; q += step) {
+    const totalRev = q * sellingPrice;
+    const totalCost = dailyFixedCost + (q * actualCOGS);
+    chartPoints.push({
+      meals: q,
+      revenue: totalRev,
+      totalCost: totalCost,
+      fixedCost: dailyFixedCost
+    });
   }
 
   res.json({
     success: true,
     data: {
-      inputs: { salesVolumeDropPercent, meatPriceIncreasePercent, dailyMealsTarget },
+      inputs: {
+        salesVolumeDropPercent: Number(salesVolumeDropPercent),
+        meatPriceIncreasePercent: Number(meatPriceIncreasePercent),
+        dailyMealsTarget: Number(dailyMealsTarget),
+        avgSellingPrice: sellingPrice,
+        avgCostOfGoodsSold: Number(avgCostOfGoodsSold),
+        fixedCostsMonthly: fixedCost
+      },
       metrics: {
         actualDailyMeals,
+        actualCOGS,
+        avgSellingPrice: sellingPrice,
         unitContributionMargin,
+        contributionMarginRatio: (contributionMarginRatio * 100).toFixed(1) + '%',
         dailyBreakEvenMeals,
         monthlyBreakEvenMeals,
+        dailyBreakEvenRevenue,
+        monthlyBreakEvenRevenue,
+        dailyFixedCost,
         monthlyRevenue,
         monthlyVariableCosts,
-        fixedCostsMonthly,
+        fixedCostsMonthly: fixedCost,
+        monthlyTotalCosts,
         monthlyNetProfit,
         profitMargin,
+        marginOfSafetyMeals,
+        marginOfSafetyPercent,
         riskAssessment,
-        contingencyPlan
+        contingencyPlan,
+        chartPoints
       }
     }
   });

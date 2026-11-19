@@ -33,7 +33,7 @@
     }
   </script>
 </head>
-<body class="selection:bg-brand-500 selection:text-white pb-24 md:pb-12">
+<body class="selection:bg-brand-500 selection:text-white pb-28 md:pb-12">
 
   <!-- Ambient Organic Liquid Light Blooms -->
   <div class="ambient-bloom bloom-1"></div>
@@ -139,6 +139,12 @@
           <button onclick="switchCustomerTab('menu')" id="btn-cust-tab-menu" class="ios-chip active">
             <span class="flex items-center gap-1.5"><i data-lucide="layout-grid" class="w-3.5 h-3.5"></i> Thực Đơn Món Ăn</span>
           </button>
+          <button onclick="switchCustomerTab('forecast')" id="btn-cust-tab-forecast" class="ios-chip">
+            <span class="flex items-center gap-1.5"><i data-lucide="line-chart" class="w-3.5 h-3.5 text-blue-500"></i> 📈 AI Dự Báo Suất Ăn</span>
+          </button>
+          <button onclick="switchCustomerTab('simulation')" id="btn-cust-tab-simulation" class="ios-chip">
+            <span class="flex items-center gap-1.5"><i data-lucide="calculator" class="w-3.5 h-3.5 text-indigo-500"></i> 📊 Điểm Hòa Vốn (BEP)</span>
+          </button>
           <button onclick="switchCustomerTab('ai-wizard')" id="btn-cust-tab-ai-wizard" class="ios-chip">
             <span class="flex items-center gap-1.5"><i data-lucide="sparkles" class="w-3.5 h-3.5 text-brand-600"></i> AI Tư Vấn Dinh Dưỡng</span>
           </button>
@@ -158,7 +164,6 @@
 
       <!-- 1.1 CUSTOMER TAB: MENU -->
       <div id="cust-tab-content-menu" class="space-y-5">
-        <!-- Category Filter Chips -->
         <div class="flex items-center gap-2 overflow-x-auto pb-1">
           <button onclick="filterMenu('all')" class="menu-filter-btn ios-chip active">Tất cả món</button>
           <button onclick="filterMenu('com_man')" class="menu-filter-btn ios-chip">Cơm mặn đặc trưng</button>
@@ -176,7 +181,337 @@
         </div>
       </div>
 
-      <!-- 1.2 CUSTOMER TAB: AI NUTRITION WIZARD -->
+      <!-- 1.2 CUSTOMER TAB: AI DỰ BÁO SUẤT ĂN & KẾ HOẠCH ĐI CHỢ (HỆ THỐNG AI 2) -->
+      <div id="cust-tab-content-forecast" class="hidden space-y-6">
+        
+        <!-- Interactive Control Box -->
+        <div class="liquid-card p-6 sm:p-8 space-y-5">
+          <div class="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200 mb-2">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-blue-600"></i>
+                Hệ thống AI số 2: Dự Báo Nhu Cầu Suất Ăn & Tự Động Định Lượng Đi Chợ (BOM)
+              </span>
+              <h2 class="text-xl sm:text-2xl font-black text-slate-900">Bảng Điều Khiển Dự Báo Nhu Cầu Ẩm Thực Thông Minh</h2>
+              <p class="text-slate-500 text-xs sm:text-sm mt-1">Thay đổi thời tiết, sự kiện hoặc số lượng khách để xem hệ thống AI tự động tính toán số lượng từng món ăn ngay lập tức!</p>
+            </div>
+
+            <button onclick="runDemandForecast()" id="btn-trigger-forecast" class="btn-ios-primary text-xs px-6 py-3">
+              <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+              <span>CHẠY DỰ BÁO NGAY</span>
+            </button>
+          </div>
+
+          <!-- Parameter Selectors -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1.5">🌦️ Tình trạng thời tiết:</label>
+              <select id="forecast-weather" onchange="runDemandForecast()" class="ios-input w-full font-medium">
+                <option value="sunny">☀️ Nắng ráo mát mẻ (Mức tiêu chuẩn)</option>
+                <option value="rainy">🌧️ Trời mưa to (Nhu cầu ship tận nơi +25%)</option>
+                <option value="hot">🔥 Nắng gắt oi bức (Trà & Sữa bắp tăng +40%)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1.5">🎯 Bối cảnh / Sự kiện:</label>
+              <select id="forecast-event" onchange="runDemandForecast()" class="ios-input w-full font-medium">
+                <option value="regular">📚 Ngày làm việc & học tập bình thường</option>
+                <option value="exam_season">✍️ Mùa cao điểm / Ôn thi (Suất ăn tăng +20%)</option>
+                <option value="weekend_holiday">🏖️ Cuối tuần / Ngày lễ (Nhu cầu giảm -45%)</option>
+                <option value="workshop">🎤 Hội nghị / Sự kiện đông người (+35%)</option>
+              </select>
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center text-xs font-bold text-slate-600 mb-1.5">
+                <span>👥 Quy mô khách tiềm năng:</span>
+                <span id="forecast-students-val" class="text-brand-600 font-extrabold text-sm">1.500 người</span>
+              </div>
+              <input type="range" id="forecast-students" min="500" max="3000" step="100" value="1500" oninput="onStudentSliderChange(this.value)" onchange="runDemandForecast()" class="w-full">
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Insights Note -->
+        <div id="forecast-insights-box" class="liquid-card p-4 bg-amber-50/70 border-amber-200/80 text-xs text-amber-900 space-y-1">
+          <div class="font-bold flex items-center gap-2">
+            <i data-lucide="info" class="w-4 h-4 text-amber-600"></i>
+            <span>Nhận Định Hoạch Định Vận Hành Của AI:</span>
+          </div>
+          <div id="forecast-insights-list" class="pl-6 space-y-1">
+            <div>• Đang phân tích dữ liệu lịch sử đơn hàng và xu hướng ẩm thực...</div>
+          </div>
+        </div>
+
+        <!-- Operational Break-even Point Alert in Demand Forecast -->
+        <div class="liquid-card p-4 sm:p-5 bg-gradient-to-r from-indigo-50/90 via-blue-50/70 to-emerald-50/80 border border-indigo-200/80 flex items-center justify-between flex-wrap gap-4 shadow-sm">
+          <div class="flex items-center gap-3.5">
+            <div class="w-11 h-11 rounded-2xl bg-indigo-600 text-white flex flex-col items-center justify-center font-black shadow-md flex-shrink-0">
+              <span class="text-xs">BEP</span>
+              <span class="text-[8px] font-bold opacity-80 uppercase">Hòa Vốn</span>
+            </div>
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h4 class="text-xs font-black uppercase tracking-wider text-indigo-900">Điểm Hòa Vốn Tác Nghiệp Ngày (Daily Break-Even Point)</h4>
+                <span id="forecast-bep-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300">
+                  VƯỢT ĐIỂM HÒA VỐN (+92 SUẤT)
+                </span>
+              </div>
+              <p id="forecast-bep-desc" class="text-xs text-slate-600 mt-1">
+                Bếp cần bán tối thiểu <b class="text-indigo-900 font-black" id="forecast-bep-target">50 suất/ngày</b> để trang trải toàn bộ định phí (~692.000đ/ngày).
+              </p>
+            </div>
+          </div>
+          <button onclick="switchCustomerTab('simulation')" class="btn-ios-glass text-xs py-2 px-4 border-indigo-200 text-indigo-700 hover:bg-indigo-600 hover:text-white transition flex items-center gap-1.5 ml-auto">
+            <i data-lucide="calculator" class="w-3.5 h-3.5"></i>
+            <span>Mở Máy Tính BEP Chi Tiết</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+
+        <!-- Real-Time Metrics Overview Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          <div class="liquid-card p-4 sm:p-5 space-y-1 border-l-4 border-l-brand-500">
+            <span class="text-[11px] font-bold text-slate-400 uppercase">Suất cơm dự báo</span>
+            <div id="metric-forecast-meals" class="text-2xl font-black text-slate-900">0 suất</div>
+            <p class="text-[10px] text-slate-500">Cơm mặn & Chay Healthy</p>
+          </div>
+
+          <div class="liquid-card p-4 sm:p-5 space-y-1 border-l-4 border-l-blue-500">
+            <span class="text-[11px] font-bold text-slate-400 uppercase">Nước uống & Canh</span>
+            <div id="metric-forecast-drinks" class="text-2xl font-black text-blue-600">0 phần</div>
+            <p class="text-[10px] text-slate-500">Giải nhiệt & Dinh dưỡng</p>
+          </div>
+
+          <div class="liquid-card p-4 sm:p-5 space-y-1 border-l-4 border-l-emerald-500">
+            <span class="text-[11px] font-bold text-slate-400 uppercase">Doanh thu dự kiến</span>
+            <div id="metric-forecast-revenue" class="text-xl sm:text-2xl font-black text-brand-600">0đ</div>
+            <p class="text-[10px] text-slate-500">Thu từ đơn bán trong ngày</p>
+          </div>
+
+          <div class="liquid-card p-4 sm:p-5 space-y-1 border-l-4 border-l-rose-500">
+            <span class="text-[11px] font-bold text-slate-400 uppercase">Chi phí đi chợ (BOM)</span>
+            <div id="metric-forecast-cogs" class="text-xl sm:text-2xl font-black text-rose-600">0đ</div>
+            <p class="text-[10px] text-slate-500">Tiền mua nguyên liệu tươi</p>
+          </div>
+
+          <div class="col-span-2 lg:col-span-1 liquid-card p-4 sm:p-5 space-y-1 border-l-4 border-l-purple-500">
+            <span class="text-[11px] font-bold text-slate-400 uppercase">Lợi nhuận gộp</span>
+            <div id="metric-forecast-profit" class="text-xl sm:text-2xl font-black text-purple-700">0đ</div>
+            <p class="text-[10px] text-emerald-600 font-bold">Biên LN gộp ~75%</p>
+          </div>
+        </div>
+
+        <!-- Grid Cards: Chi tiết số suất từng món ăn -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+              <i data-lucide="layers" class="w-4 h-4 text-brand-600"></i>
+              <span>Dự Báo Chi Tiết Cho Từng Món Ăn Trong Thực Đơn</span>
+            </h3>
+            <span class="text-xs text-slate-500">Tự động cân đối tỷ trọng món bán chạy</span>
+          </div>
+          <div id="forecast-dish-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Chart and Shopping List -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2 liquid-card p-6 space-y-4">
+            <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Biểu đồ so sánh số suất dự báo</h4>
+            <div class="h-64 sm:h-72">
+              <canvas id="forecastChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Quick Grocery Summary Box -->
+          <div class="liquid-card p-6 space-y-4 flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-3">
+                <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+              </div>
+              <h4 class="text-base font-extrabold text-slate-900">Kế Hoạch Mua Nguyên Liệu</h4>
+              <p class="text-xs text-slate-500 mt-1">Hệ thống so khớp tự động lượng cần nấu với số lượng sẵn có trong kho để tạo danh sách mua sắm thông minh.</p>
+            </div>
+
+            <div class="space-y-3 pt-3 border-t border-slate-100">
+              <div id="bom-total-buy-cost" class="text-xs font-bold text-slate-700 bg-slate-100/80 p-3 rounded-2xl border border-slate-200/60 text-center">
+                Tổng tiền cần đi chợ: <span class="text-rose-600 font-black text-base block mt-0.5">0đ</span>
+              </div>
+              <button onclick="approveGroceryList()" class="btn-ios-primary w-full text-xs py-3.5 shadow-lg">
+                <i data-lucide="check-check" class="w-4 h-4"></i>
+                <span>DUYỆT NHẬP KHO TỰ ĐỘNG</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Full BOM Table -->
+        <div class="liquid-card p-6 space-y-4">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <div>
+              <h4 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                <i data-lucide="clipboard-check" class="w-5 h-5 text-brand-600"></i>
+                <span>Bảng Định Lượng Nguyên Liệu Cần Mua Chi Tiết (BOM - Bill of Materials)</span>
+              </h4>
+              <p class="text-xs text-slate-500">Bảo đảm đủ nguyên liệu phục vụ khách, không mua dư thừa dẫn đến thiu hỏng</p>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-slate-200/80 bg-slate-50/70 text-slate-600 font-bold">
+                  <th class="py-3 px-3">Nguyên liệu</th>
+                  <th class="py-3 px-3">Cần cho nấu</th>
+                  <th class="py-3 px-3">Tồn kho hiện có</th>
+                  <th class="py-3 px-3">Cần mua thêm (+10% đệm)</th>
+                  <th class="py-3 px-3">Đơn giá ước tính</th>
+                  <th class="py-3 px-3 text-right">Thành tiền</th>
+                </tr>
+              </thead>
+              <tbody id="bom-table-tbody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 1.3 CUSTOMER TAB: MÔ PHỎNG TÀI CHÍNH & MÁY TÍNH ĐIỂM HÒA VỐN (BEP) -->
+      <div id="cust-tab-content-simulation" class="hidden space-y-6">
+        
+        <!-- Header Hero Box -->
+        <div class="liquid-card-dark text-white p-6 sm:p-10 relative overflow-hidden">
+          <div class="max-w-3xl">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 mb-3">
+              <i data-lucide="calculator" class="w-3.5 h-3.5"></i>
+              Chức năng Hoạch Định Tài Chính: Điểm Hòa Vốn (BEP) & Quản Trị Rủi Ro
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-black tracking-tight">Máy Tính Điểm Hòa Vốn (Break-even Point) & Dự Phóng Lợi Nhuận</h2>
+            <p class="text-slate-300 text-xs sm:text-sm mt-2 leading-relaxed">
+              Mô hình hóa chính xác điểm hòa vốn số lượng suất ăn (<span class="font-mono text-emerald-300">Q_bep = FC / (P - VC)</span>) và doanh thu hòa vốn. Tích hợp thanh trượt độ nhạy để kiểm tra sức chịu đựng của bếp trước biến động giá thịt và sụt giảm lượng khách.
+            </p>
+          </div>
+
+          <!-- Parameter Sliders -->
+          <div class="mt-8 bg-white/10 backdrop-blur-md rounded-3xl p-5 sm:p-7 border border-white/15 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div>
+              <div class="flex justify-between text-xs font-bold mb-1.5">
+                <span class="text-slate-300">1. Định phí tháng (Fixed Costs):</span>
+                <span id="sim-fixed-cost-val" class="text-indigo-300 font-black">18.0 triệu/tháng</span>
+              </div>
+              <input type="range" id="sim-fixed-cost" min="8000000" max="40000000" step="1000000" value="18000000" oninput="onSimInputChange()" class="w-full">
+              <span class="text-[10px] text-slate-400">Mặt bằng, khấu hao bếp, phần mềm, lương cứng</span>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs font-bold mb-1.5">
+                <span class="text-slate-300">2. Giá bán trung bình (P):</span>
+                <span id="sim-selling-price-val" class="text-emerald-400 font-black">32.000đ/suất</span>
+              </div>
+              <input type="range" id="sim-selling-price" min="20000" max="55000" step="1000" value="32000" oninput="onSimInputChange()" class="w-full">
+              <span class="text-[10px] text-slate-400">Giá bán niêm yết trung bình thực đơn Bếp Gọn</span>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs font-bold mb-1.5">
+                <span class="text-slate-300">3. Biến phí mỗi suất (VC / COGS):</span>
+                <span id="sim-cogs-val" class="text-amber-300 font-black">18.000đ/suất</span>
+              </div>
+              <input type="range" id="sim-cogs" min="10000" max="30000" step="1000" value="18000" oninput="onSimInputChange()" class="w-full">
+              <span class="text-[10px] text-slate-400">Nguyên liệu thịt, rau, gia vị, hộp bao bì</span>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs font-bold mb-1.5">
+                <span class="text-slate-300">4. Công suất phục vụ mục tiêu:</span>
+                <span id="sim-meals-target-val" class="text-emerald-300 font-black">150 suất/ngày</span>
+              </div>
+              <input type="range" id="sim-meals-target" min="40" max="350" step="10" value="150" oninput="onSimInputChange()" class="w-full">
+              <span class="text-[10px] text-slate-400">Sản lượng kỳ vọng phục vụ hàng ngày</span>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs font-bold mb-1.5">
+                <span class="text-slate-300">5. Rủi ro: Giá thịt/nguyên liệu tăng:</span>
+                <span id="sim-meat-price-val" class="text-rose-300 font-black">0%</span>
+              </div>
+              <input type="range" id="sim-meat-price" min="0" max="50" step="5" value="0" oninput="onSimInputChange()" class="w-full">
+              <span class="text-[10px] text-slate-400">Kiểm tra độ nhạy khi lạm phát thực phẩm</span>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs font-bold mb-1.5">
+                <span class="text-slate-300">6. Rủi ro: Lượng khách sụt giảm:</span>
+                <span id="sim-sales-drop-val" class="text-rose-400 font-black">0%</span>
+              </div>
+              <input type="range" id="sim-sales-drop" min="0" max="60" step="5" value="0" oninput="onSimInputChange()" class="w-full">
+              <span class="text-[10px] text-slate-400">Mưa bão kéo dài hoặc sinh viên nghỉ hè/Tết</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-Time Break-Even Metric Cards -->
+        <div id="sim-results" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <!-- Rendered by JS -->
+        </div>
+
+        <!-- Break-Even Visual Graph & Formula Box -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2 liquid-card p-6 space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <div>
+                <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Đồ Thị Trực Quan Điểm Hòa Vốn (Break-even Chart)</h4>
+                <p class="text-xs text-slate-500">Giao điểm giữa Doanh thu và Tổng chi phí xác định điểm hòa vốn tối thiểu</p>
+              </div>
+              <div class="flex items-center gap-3 text-[11px] font-bold">
+                <span class="inline-flex items-center gap-1 text-emerald-600"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Doanh thu</span>
+                <span class="inline-flex items-center gap-1 text-rose-500"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Tổng chi phí</span>
+                <span class="inline-flex items-center gap-1 text-slate-500"><span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span> Định phí</span>
+              </div>
+            </div>
+            <div class="h-64 sm:h-80">
+              <canvas id="simBreakEvenChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Formula & Logic Explainer Box -->
+          <div class="liquid-card p-6 space-y-4 flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-black">
+                <i data-lucide="book-open" class="w-5 h-5"></i>
+              </div>
+              <h4 class="text-base font-extrabold text-slate-900">Công Thức Quản Trị Học</h4>
+              <div class="space-y-2 text-xs text-slate-600 bg-slate-50/80 p-3.5 rounded-2xl border border-slate-200/60 font-mono">
+                <div><b>Lãi gộp (CM):</b> P - VC</div>
+                <div><b>BEP (suất):</b> FC / (P - VC)</div>
+                <div><b>BEP (tiền):</b> BEP (suất) × P</div>
+                <div><b>Độ an toàn:</b> Q thực tế - Q hòa vốn</div>
+              </div>
+              <p class="text-[11px] text-slate-500 leading-relaxed">
+                Khi bán vượt điểm hòa vốn, mỗi suất cơm bán thêm sẽ đóng góp trọn vẹn số tiền lãi gộp vào lợi nhuận ròng của Bếp Gọn AI.
+              </p>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100">
+              <button onclick="runFinancialSimulation()" class="btn-ios-primary w-full text-xs py-3.5 shadow-md">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                <span>TÍNH TOÁN LẠI TÀI CHÍNH</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Contingency Action Plan -->
+        <div id="sim-action-plan-box" class="liquid-card p-6 space-y-3">
+          <!-- Rendered by JS -->
+        </div>
+
+      </div>
+
+      <!-- 1.4 CUSTOMER TAB: AI NUTRITION WIZARD -->
       <div id="cust-tab-content-ai-wizard" class="hidden space-y-6">
         <div class="liquid-card-dark text-white p-6 sm:p-10 relative overflow-hidden">
           <div class="max-w-2xl">
@@ -190,9 +525,7 @@
             </p>
           </div>
 
-          <!-- Wizard Input Form -->
           <div class="mt-8 bg-white/10 backdrop-blur-md rounded-3xl p-5 sm:p-7 border border-white/15 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <!-- Budget -->
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
                 Ngân sách mỗi bữa: <span id="wizard-budget-display" class="text-emerald-400 font-extrabold text-sm">35.000đ</span>
@@ -205,7 +538,6 @@
               </div>
             </div>
 
-            <!-- Goal -->
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Mục tiêu dinh dưỡng</label>
               <select id="wizard-goal" class="w-full bg-slate-800/90 text-slate-100 text-xs rounded-2xl p-3 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
@@ -215,7 +547,6 @@
               </select>
             </div>
 
-            <!-- Dietary -->
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Chế độ ăn</label>
               <select id="wizard-dietary" class="w-full bg-slate-800/90 text-slate-100 text-xs rounded-2xl p-3 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
@@ -224,7 +555,6 @@
               </select>
             </div>
 
-            <!-- Allergens -->
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Dị ứng / Tránh</label>
               <select id="wizard-allergies" class="w-full bg-slate-800/90 text-slate-100 text-xs rounded-2xl p-3 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
@@ -235,7 +565,6 @@
               </select>
             </div>
 
-            <!-- Submit Button -->
             <div class="col-span-full pt-3">
               <button onclick="generateAIRecommendation()" id="btn-run-wizard" class="w-full sm:w-auto btn-ios-primary text-xs px-8 py-3.5">
                 <i data-lucide="cpu" class="w-4 h-4"></i>
@@ -245,7 +574,6 @@
           </div>
         </div>
 
-        <!-- Wizard Results Container -->
         <div id="wizard-results" class="hidden space-y-6">
           <div id="wizard-best-dish" class="liquid-card p-6 flex flex-col md:flex-row items-center gap-6"></div>
 
@@ -280,10 +608,9 @@
         </div>
       </div>
 
-      <!-- 1.3 CUSTOMER TAB: AI CHAT ASSISTANT -->
+      <!-- 1.4 CUSTOMER TAB: AI CHAT ASSISTANT -->
       <div id="cust-tab-content-ai-chat" class="hidden space-y-4">
         <div class="liquid-card overflow-hidden flex flex-col h-[620px]">
-          <!-- Chat Header -->
           <div class="p-4 bg-slate-900/95 text-white flex items-center justify-between border-b border-white/10">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-2xl bg-emerald-500 flex items-center justify-center text-slate-900 font-extrabold shadow-md">
@@ -300,7 +627,6 @@
             <button onclick="clearChat()" class="text-xs text-slate-400 hover:text-white transition">Làm mới</button>
           </div>
 
-          <!-- Chat Messages Area -->
           <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50/50">
             <div class="flex items-start gap-3">
               <div class="w-8 h-8 rounded-xl bg-brand-600 text-white flex items-center justify-center flex-shrink-0 text-xs font-bold shadow-sm">AI</div>
@@ -316,7 +642,6 @@
             </div>
           </div>
 
-          <!-- Quick Prompts Pills -->
           <div class="px-4 py-2 bg-white/70 border-t border-slate-100 flex items-center gap-2 overflow-x-auto text-[11px]">
             <span class="text-slate-400 flex-shrink-0 font-medium">Gợi ý nhanh:</span>
             <button onclick="sendQuickPrompt('Hôm nay có món gì dưới 35k không cay?')" class="ios-chip text-[11px] py-1 px-3">Cơm dưới 35k không cay</button>
@@ -324,7 +649,6 @@
             <button onclick="sendQuickPrompt('Đặt giúp tôi 2 cơm gà áp chảo và 1 trà bí đao')" class="ios-chip text-[11px] py-1 px-3">Đặt 2 cơm gà + 1 trà bí đao</button>
           </div>
 
-          <!-- Chat Input -->
           <div class="p-3 bg-white/90 border-t border-slate-200/60 flex items-center gap-2">
             <input type="text" id="chat-input" onkeydown="handleChatKey(event)" placeholder="Nhập yêu cầu món ăn (vd: cơm sườn không cay, cơm dưới 30k...)" class="ios-input flex-1">
             <button onclick="sendChatMessage()" class="btn-ios-primary p-3 rounded-2xl">
@@ -334,7 +658,7 @@
         </div>
       </div>
 
-      <!-- 1.4 CUSTOMER TAB: REVIEWS -->
+      <!-- 1.5 CUSTOMER TAB: REVIEWS -->
       <div id="cust-tab-content-reviews" class="hidden space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="liquid-card p-6 space-y-4">
@@ -444,153 +768,25 @@
 
       <!-- Admin Sub-Navigation Tabs -->
       <div class="flex items-center gap-2 overflow-x-auto border-b border-slate-200/80 pb-3">
-        <button onclick="switchAdminTab('forecast')" id="btn-adm-tab-forecast" class="ios-chip active">
-          <span class="flex items-center gap-1.5"><i data-lucide="line-chart" class="w-4 h-4 text-emerald-400"></i> Dự Báo Nhu Cầu & Nhập Hàng</span>
-        </button>
-        <button onclick="switchAdminTab('kanban')" id="btn-adm-tab-kanban" class="ios-chip">
-          <span class="flex items-center gap-1.5"><i data-lucide="clipboard-list" class="w-4 h-4"></i> Bếp Điều Hành (Kanban Live)</span>
+        <button onclick="switchAdminTab('kanban')" id="btn-adm-tab-kanban" class="ios-chip active">
+          <span class="flex items-center gap-1.5"><i data-lucide="clipboard-list" class="w-4 h-4 text-brand-600"></i> Bếp Điều Hành (Kanban Live)</span>
         </button>
         <button onclick="switchAdminTab('inventory')" id="btn-adm-tab-inventory" class="ios-chip">
           <span class="flex items-center gap-1.5"><i data-lucide="boxes" class="w-4 h-4 text-amber-500"></i> Kho & Giám Sát FIFO Hạn Dùng</span>
         </button>
-        <button onclick="switchAdminTab('simulation')" id="btn-adm-tab-simulation" class="ios-chip">
-          <span class="flex items-center gap-1.5"><i data-lucide="sliders" class="w-4 h-4 text-indigo-500"></i> Báo Cáo Tài Chính & Phân Tích Rủi Ro</span>
-        </button>
         <button onclick="switchAdminTab('sentiment-insights')" id="btn-adm-tab-sentiment-insights" class="ios-chip">
           <span class="flex items-center gap-1.5"><i data-lucide="pie-chart" class="w-4 h-4 text-rose-500"></i> Phân Tích Cảm Xúc & Thấu Cảm</span>
         </button>
+        <button onclick="openSimulationFromAdmin()" id="btn-adm-tab-simulation" class="ios-chip">
+          <span class="flex items-center gap-1.5"><i data-lucide="calculator" class="w-4 h-4 text-indigo-500"></i> 📊 Điểm Hòa Vốn (BEP)</span>
+        </button>
+        <button onclick="openForecastFromAdmin()" id="btn-adm-tab-forecast" class="ios-chip">
+          <span class="flex items-center gap-1.5"><i data-lucide="line-chart" class="w-4 h-4 text-emerald-500"></i> 📈 AI Dự Báo Nhu Cầu & BOM</span>
+        </button>
       </div>
 
-      <!-- 2.1 ADMIN TAB: DEMAND FORECAST & BOM PURCHASING -->
-      <div id="adm-tab-content-forecast" class="space-y-6">
-        <div class="liquid-card p-6 space-y-4">
-          <div class="flex items-center justify-between flex-wrap gap-2">
-            <div>
-              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 mb-1">
-                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-emerald-600"></i>
-                Hệ thống dự báo nhu cầu & Hoạch định định lượng thực phẩm (BOM)
-              </span>
-              <h3 class="text-lg font-extrabold text-slate-900">Dự Báo Suất Ăn & Tự Động Lập Kế Hoạch Đi Chợ</h3>
-            </div>
-            <button onclick="runDemandForecast()" class="btn-ios-primary text-xs px-5 py-2.5">
-              <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-              <span>TÍNH TOÁN DỰ BÁO NGAY</span>
-            </button>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Thời tiết khu vực:</label>
-              <select id="forecast-weather" class="ios-input w-full">
-                <option value="sunny">☀️ Nắng ráo (Khách hàng đi lại bình thường)</option>
-                <option value="rainy">🌧️ Trời mưa to (Nhu cầu giao tận nơi tăng +25%)</option>
-                <option value="hot">🔥 Nắng gắt oi bức (Nước mát & sữa bắp tăng +40%)</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Sự kiện & Ngày đặc biệt:</label>
-              <select id="forecast-event" class="ios-input w-full">
-                <option value="regular">📚 Ngày làm việc & học tập bình thường</option>
-                <option value="exam_season">✍️ Mùa cao điểm / Ôn thi (Nhu cầu suất ăn tăng +20%)</option>
-                <option value="weekend_holiday">🏖️ Cuối tuần / Ngày lễ (Nhu cầu giảm -45%)</option>
-                <option value="workshop">🎤 Hội nghị / Sự kiện đoàn thể đông người (+35%)</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Quy mô khách hàng tiềm năng:</label>
-              <input type="number" id="forecast-students" value="1200" step="100" class="ios-input w-full">
-            </div>
-          </div>
-        </div>
-
-        <div id="forecast-insights-box" class="liquid-card p-4 bg-amber-50/70 border-amber-200/80 text-xs text-amber-900 space-y-1">
-          <div class="font-bold flex items-center gap-2">
-            <i data-lucide="info" class="w-4 h-4 text-amber-600"></i>
-            <span>Nhận Định Hoạch Định Từ AI:</span>
-          </div>
-          <div id="forecast-insights-list" class="pl-6 space-y-1"></div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div class="lg:col-span-2 liquid-card p-6 space-y-4">
-            <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Biểu đồ số suất dự báo theo từng món ăn</h4>
-            <div class="h-64">
-              <canvas id="forecastChart"></canvas>
-            </div>
-          </div>
-
-          <div class="liquid-card p-6 space-y-4">
-            <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Dự phóng Doanh thu & Chi phí ngày mai</h4>
-            <div class="space-y-3 pt-2">
-              <div class="flex justify-between items-center text-xs pb-2 border-b border-slate-100">
-                <span class="text-slate-500">Tổng suất cơm dự báo:</span>
-                <span id="metric-forecast-meals" class="font-extrabold text-slate-900">0 suất</span>
-              </div>
-              <div class="flex justify-between items-center text-xs pb-2 border-b border-slate-100">
-                <span class="text-slate-500">Tổng nước & canh:</span>
-                <span id="metric-forecast-drinks" class="font-extrabold text-slate-900">0 phần</span>
-              </div>
-              <div class="flex justify-between items-center text-xs pb-2 border-b border-slate-100">
-                <span class="text-slate-500">Doanh thu dự kiến:</span>
-                <span id="metric-forecast-revenue" class="font-extrabold text-brand-600">0đ</span>
-              </div>
-              <div class="flex justify-between items-center text-xs pb-2 border-b border-slate-100">
-                <span class="text-slate-500">Chi phí đi chợ dự kiến:</span>
-                <span id="metric-forecast-cogs" class="font-extrabold text-rose-600">0đ</span>
-              </div>
-              <div class="flex justify-between items-center text-xs pt-1">
-                <span class="font-bold text-slate-700">Lợi nhuận gộp dự phóng:</span>
-                <span id="metric-forecast-profit" class="font-extrabold text-emerald-600 text-sm">0đ</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- BOM Grocery Shopping List with Approve Button -->
-        <div class="liquid-card p-6 space-y-4">
-          <div class="flex items-center justify-between flex-wrap gap-3">
-            <div>
-              <h4 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                <i data-lucide="shopping-cart" class="w-5 h-5 text-brand-600"></i>
-                <span>Bảng Định Lượng Nguyên Liệu Cần Mua (BOM - Bill of Materials)</span>
-              </h4>
-              <p class="text-xs text-slate-500">Tự động so khớp công thức món với tồn kho để mua đúng định mức, triệt tiêu lãng phí</p>
-            </div>
-            
-            <div class="flex items-center gap-3">
-              <div id="bom-total-buy-cost" class="text-xs font-bold text-slate-700 bg-slate-100/80 px-3 py-1.5 rounded-xl border border-slate-200/60">
-                Tổng tiền đi chợ: <span class="text-rose-600 font-extrabold text-sm">0đ</span>
-              </div>
-              <button onclick="approveGroceryList()" class="btn-ios-primary text-xs py-2 px-4">
-                <i data-lucide="check-check" class="w-4 h-4"></i>
-                <span>Duyệt Nhập Kho Tự Động</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr class="border-b border-slate-200/80 bg-slate-50/70 text-slate-600 font-bold">
-                  <th class="py-3 px-3">Nguyên liệu</th>
-                  <th class="py-3 px-3">Cần cho nấu</th>
-                  <th class="py-3 px-3">Tồn kho hiện có</th>
-                  <th class="py-3 px-3">Cần mua thêm (+10% đệm)</th>
-                  <th class="py-3 px-3">Đơn giá ước tính</th>
-                  <th class="py-3 px-3 text-right">Thành tiền</th>
-                </tr>
-              </thead>
-              <tbody id="bom-table-tbody" class="divide-y divide-slate-100"></tbody>
-            </table>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- 2.2 ADMIN TAB: KITCHEN ORDER KANBAN -->
-      <div id="adm-tab-content-kanban" class="hidden space-y-6">
+      <!-- 2.1 ADMIN TAB: KITCHEN ORDER KANBAN -->
+      <div id="adm-tab-content-kanban" class="space-y-6">
         <div class="flex items-center justify-between">
           <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
             <i data-lucide="kanban" class="w-5 h-5 text-brand-600"></i>
@@ -641,7 +837,7 @@
         </div>
       </div>
 
-      <!-- 2.3 ADMIN TAB: INVENTORY & FIFO MONITOR -->
+      <!-- 2.2 ADMIN TAB: INVENTORY & FIFO MONITOR -->
       <div id="adm-tab-content-inventory" class="hidden space-y-6">
         <div class="liquid-card p-6 space-y-4">
           <div class="flex items-center justify-between flex-wrap gap-2">
@@ -676,63 +872,7 @@
         </div>
       </div>
 
-      <!-- 2.4 ADMIN TAB: FINANCIAL REPORT & RISK ANALYSIS -->
-      <div id="adm-tab-content-simulation" class="hidden space-y-6">
-        <div class="liquid-card-dark text-white p-6 sm:p-10">
-          <div class="max-w-2xl">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 mb-2">
-              <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
-              Báo cáo tài chính & Kiểm soát rủi ro vận hành
-            </span>
-            <h2 class="text-2xl font-extrabold tracking-tight">Phân Tích Điểm Hòa Vốn & Lợi Nhuận Hoạt Động</h2>
-            <p class="text-slate-300 text-xs mt-2 leading-relaxed">
-              Đánh giá sức khỏe tài chính của bếp với các biến số rủi ro: <span class="text-amber-400 font-bold">Biến động lượng khách</span> và <span class="text-rose-400 font-bold">Biến động giá nguyên liệu đầu vào</span>.
-            </p>
-          </div>
-
-          <!-- Simulation Sliders -->
-          <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/10">
-            <div>
-              <div class="flex justify-between text-xs font-bold mb-2">
-                <span class="text-slate-300">Biến số: Doanh số sụt giảm:</span>
-                <span id="sim-sales-drop-val" class="text-rose-400 font-extrabold">0%</span>
-              </div>
-              <input type="range" id="sim-sales-drop" min="0" max="50" step="5" value="0" oninput="updateSimSliderVal('sales-drop', this.value)" class="w-full">
-              <span class="text-[10px] text-slate-400">Ví dụ: Mùa mưa bão, kỳ nghỉ dài ngày</span>
-            </div>
-
-            <div>
-              <div class="flex justify-between text-xs font-bold mb-2">
-                <span class="text-slate-300">Biến số: Giá nguyên liệu tăng:</span>
-                <span id="sim-meat-price-val" class="text-amber-400 font-extrabold">0%</span>
-              </div>
-              <input type="range" id="sim-meat-price" min="0" max="40" step="5" value="0" oninput="updateSimSliderVal('meat-price', this.value)" class="w-full">
-              <span class="text-[10px] text-slate-400">Ví dụ: Biến động giá thịt, rau củ thị trường</span>
-            </div>
-
-            <div>
-              <div class="flex justify-between text-xs font-bold mb-2">
-                <span class="text-slate-300">Công suất phục vụ mục tiêu:</span>
-                <span id="sim-meals-target-val" class="text-emerald-400 font-extrabold">150 suất/ngày</span>
-              </div>
-              <input type="range" id="sim-meals-target" min="50" max="300" step="10" value="150" oninput="updateSimSliderVal('meals-target', this.value)" class="w-full">
-              <span class="text-[10px] text-slate-400">Công suất thiết kế của bếp: 300 suất</span>
-            </div>
-
-            <div class="col-span-full">
-              <button onclick="runFinancialSimulation()" class="btn-ios-primary text-xs py-3 px-6">
-                <i data-lucide="calculator" class="w-4 h-4"></i>
-                <span>TÍNH TOÁN ĐIỂM HÒA VỐN & LỢI NHUẬN RÒNG</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div id="sim-results" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
-        <div id="sim-action-plan-box" class="liquid-card p-6 space-y-3"></div>
-      </div>
-
-      <!-- 2.5 ADMIN TAB: SENTIMENT & INSIGHTS -->
+      <!-- 2.3 ADMIN TAB: SENTIMENT & INSIGHTS -->
       <div id="adm-tab-content-sentiment-insights" class="hidden space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="liquid-card p-6 space-y-4">
@@ -759,9 +899,13 @@
       <i data-lucide="layout-grid" class="w-4 h-4"></i>
       <span>Món ăn</span>
     </button>
+    <button onclick="mobileNav('forecast')" id="mob-btn-forecast" class="mobile-dock-btn">
+      <i data-lucide="line-chart" class="w-4 h-4"></i>
+      <span>Dự báo</span>
+    </button>
     <button onclick="mobileNav('ai-wizard')" id="mob-btn-wizard" class="mobile-dock-btn">
       <i data-lucide="sparkles" class="w-4 h-4"></i>
-      <span>AI Vi chất</span>
+      <span>Dinh dưỡng</span>
     </button>
     <button onclick="mobileNav('ai-chat')" id="mob-btn-chat" class="mobile-dock-btn">
       <i data-lucide="message-square" class="w-4 h-4"></i>
@@ -771,10 +915,6 @@
       <i data-lucide="shopping-bag" class="w-4 h-4"></i>
       <span>Giỏ</span>
       <span id="mob-cart-badge" class="absolute 0 right-2 bg-rose-500 text-white text-[9px] font-black h-4 w-4 rounded-full flex items-center justify-center">0</span>
-    </button>
-    <button onclick="toggleMobileRole()" id="mob-btn-role" class="mobile-dock-btn">
-      <i data-lucide="chef-hat" class="w-4 h-4"></i>
-      <span>Quản trị</span>
     </button>
   </nav>
 
