@@ -1,41 +1,330 @@
-/* Custom styles and enhancements for Bếp Gọn AI */
+/* =========================================================================
+   BẾP GỌN AI - LIQUID GLASS & iOS DESIGN SYSTEM
+   Bản quyền: LocTM (https://ltmprofile.pages.dev/)
+   ========================================================================= */
 
-body {
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --font-ios: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
+  
+  /* Liquid Glass Palette */
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-bg-subtle: rgba(255, 255, 255, 0.52);
+  --glass-bg-dark: rgba(15, 23, 42, 0.78);
+  --glass-border: rgba(255, 255, 255, 0.65);
+  --glass-border-dark: rgba(255, 255, 255, 0.12);
+  --glass-inner-light: inset 0 1px 1px 0 rgba(255, 255, 255, 0.85);
+  --glass-shadow: 0 20px 45px -15px rgba(16, 24, 40, 0.08), 0 0 1px 1px rgba(255, 255, 255, 0.6);
+  --glass-shadow-hover: 0 28px 60px -15px rgba(5, 150, 105, 0.16), 0 0 1px 1px rgba(255, 255, 255, 0.8);
+  
+  /* Brand Accent */
+  --brand-primary: #059669;
+  --brand-gradient: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+  --brand-glow: 0 10px 30px -8px rgba(16, 185, 129, 0.45);
+}
+
+/* Global Reset & iOS Smoothing */
+*, *::before, *::after {
+  box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbars */
+body {
+  font-family: var(--font-ios);
+  background: #f8fafc;
+  color: #0f172a;
+  overflow-x: hidden;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Ambient Organic Light Blooms (Liquid Glass backdrop) */
+.ambient-bloom {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+}
+.bloom-1 {
+  width: 550px;
+  height: 550px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.18) 0%, rgba(52, 211, 153, 0.05) 70%, transparent 100%);
+  top: -120px;
+  left: -80px;
+  animation: floatOrb 18s ease-in-out infinite alternate;
+}
+.bloom-2 {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.14) 0%, rgba(99, 102, 241, 0.04) 70%, transparent 100%);
+  top: 35%;
+  right: -150px;
+  animation: floatOrb 22s ease-in-out infinite alternate-reverse;
+}
+.bloom-3 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(251, 146, 60, 0.12) 0%, rgba(245, 158, 11, 0.03) 70%, transparent 100%);
+  bottom: 50px;
+  left: 20%;
+  animation: floatOrb 20s ease-in-out infinite alternate;
+}
+
+@keyframes floatOrb {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, 30px) scale(1.08); }
+  100% { transform: translate(-30px, -20px) scale(0.95); }
+}
+
+/* =========================================================================
+   LIQUID GLASS COMPONENTS
+   ========================================================================= */
+
+/* Liquid Glass Card */
+.liquid-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-inner-light), var(--glass-shadow);
+  border-radius: 28px;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
+}
+
+.liquid-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--glass-inner-light), var(--glass-shadow-hover);
+  border-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Liquid Dark Glass Card (for Header & Featured hero widgets) */
+.liquid-card-dark {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.88) 0%, rgba(30, 41, 59, 0.82) 100%);
+  backdrop-filter: blur(32px) saturate(190%);
+  -webkit-backdrop-filter: blur(32px) saturate(190%);
+  border: 1px solid var(--glass-border-dark);
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.15), 0 25px 50px -15px rgba(0, 0, 0, 0.3);
+  border-radius: 32px;
+}
+
+/* iOS Segmented Control (Pill Switcher) */
+.ios-segmented-control {
+  background: rgba(241, 245, 249, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 4px;
+  border-radius: 18px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.ios-segmented-btn {
+  padding: 8px 18px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ios-segmented-btn.active {
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  transform: scale(1.02);
+}
+
+/* iOS Glass Buttons */
+.btn-ios-primary {
+  background: var(--brand-gradient);
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 18px;
+  padding: 11px 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.35), var(--brand-glow);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-ios-primary:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.45), 0 14px 35px -8px rgba(16, 185, 129, 0.55);
+}
+
+.btn-ios-primary:active {
+  transform: scale(0.97);
+}
+
+.btn-ios-glass {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: var(--glass-inner-light), 0 4px 12px rgba(0, 0, 0, 0.03);
+  color: #1e293b;
+  font-weight: 700;
+  border-radius: 16px;
+  padding: 9px 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-ios-glass:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-1px);
+}
+
+.btn-ios-glass:active {
+  transform: scale(0.97);
+}
+
+/* iOS Pill Category Chips */
+.ios-chip {
+  padding: 8px 18px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: var(--glass-inner-light), 0 2px 6px rgba(0, 0, 0, 0.03);
+  color: #475569;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.ios-chip:hover {
+  background: #ffffff;
+  color: #0f172a;
+  transform: translateY(-1px);
+}
+
+.ios-chip.active {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
+}
+
+/* iOS Range Sliders */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #e2e8f0;
+  height: 8px;
+  border-radius: 9999px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), 0 0 1px rgba(0, 0, 0, 0.1);
+  border: 0.5px solid rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+/* iOS Form Inputs */
+.ios-input {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(203, 213, 225, 0.8);
+  border-radius: 16px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #0f172a;
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.ios-input:focus {
+  border-color: #10b981;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
+}
+
+/* =========================================================================
+   MOBILE BOTTOM DOCK / LIQUID GLASS BAR (iPhone & Mobile Devices)
+   ========================================================================= */
+.mobile-glass-dock {
+  position: fixed;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(440px, calc(100% - 24px));
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(30px) saturate(200%);
+  -webkit-backdrop-filter: blur(30px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), 0 16px 40px -10px rgba(15, 23, 42, 0.15);
+  border-radius: 36px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 45;
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+}
+
+.mobile-dock-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 12px;
+  border-radius: 18px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.mobile-dock-btn.active {
+  color: #059669;
+  background: rgba(16, 185, 129, 0.12);
+}
+
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: rgba(148, 163, 184, 0.5);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: rgba(100, 116, 139, 0.8);
 }
-
-/* Card hover animation */
-.dish-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.dish-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.08);
-}
-
-/* Pulse badge */
-@keyframes soft-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.85; transform: scale(1.05); }
-}
-.soft-pulse {
-  animation: soft-pulse 2s infinite ease-in-out;
-}
-

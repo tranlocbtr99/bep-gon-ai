@@ -2,8 +2,8 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BẾP GỌN AI – Smart Food, Smart Living | Bản quyền LocTM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>BẾP GỌN AI – Smart Food, Smart Living | Liquid Glass iOS Style</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
@@ -12,32 +12,20 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Canvas Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <!-- Font Google Sans / Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
   <script>
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-          },
           colors: {
             brand: {
               50: '#ecfdf5',
               100: '#d1fae5',
-              200: '#a7f3d0',
               500: '#10b981',
               600: '#059669',
               700: '#047857',
               800: '#065f46',
               900: '#064e3b',
-            },
-            accent: {
-              500: '#f59e0b',
-              600: '#d97706',
             }
           }
         }
@@ -45,140 +33,143 @@
     }
   </script>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans selection:bg-brand-500 selection:text-white">
+<body class="selection:bg-brand-500 selection:text-white pb-24 md:pb-12">
+
+  <!-- Ambient Organic Liquid Light Blooms -->
+  <div class="ambient-bloom bloom-1"></div>
+  <div class="ambient-bloom bloom-2"></div>
+  <div class="ambient-bloom bloom-3"></div>
 
   <!-- ================= TOP BAR: OPERATIONAL & AUTHOR INFO ================= -->
-  <div class="bg-slate-900 text-white text-xs px-4 py-2 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 z-50">
-    <div class="flex items-center gap-3">
-      <div class="flex items-center gap-2">
-        <span class="flex h-2 w-2 relative">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-        </span>
-        <span class="font-bold tracking-wider text-emerald-400 uppercase">Hệ Thống Đang Vận Hành Trực Tuyến</span>
+  <div class="relative z-40 bg-slate-900/90 text-white text-xs px-4 py-2 border-b border-white/10 backdrop-blur-md flex flex-wrap items-center justify-between gap-2">
+    <div class="max-w-7xl mx-auto w-full flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
+          <span class="flex h-2 w-2 relative">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          <span class="font-bold tracking-wider text-emerald-400 uppercase text-[11px]">Hệ Thống Trực Tuyến</span>
+        </div>
+        <span class="text-slate-500 hidden sm:inline">|</span>
+        <span class="text-slate-300 hidden sm:inline">📞 Hotline: <b>0912.345.678</b></span>
+        <span class="text-slate-500 hidden md:inline">|</span>
+        <span class="text-slate-400 hidden md:inline">Cơm nóng giao tận nơi trong 20 phút</span>
       </div>
-      <span class="text-slate-500 hidden sm:inline">|</span>
-      <span class="text-slate-300 hidden sm:inline">📞 Hotline: <b>0912.345.678</b> (06:30 - 21:00)</span>
-      <span class="text-slate-500 hidden md:inline">|</span>
-      <span class="text-slate-400 hidden md:inline">Giao nhanh trong 20 phút</span>
-    </div>
 
-    <!-- Author Profile Button -->
-    <div class="flex items-center gap-2">
-      <a href="https://ltmprofile.pages.dev/" target="_blank" rel="noopener noreferrer" class="px-3 py-1 rounded-full bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-slate-900 font-extrabold transition flex items-center gap-1.5 border border-emerald-500/40 shadow-sm">
-        <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
-        <span>Tác giả & Bản quyền: LocTM</span>
-        <i data-lucide="external-link" class="w-3 h-3 opacity-70"></i>
-      </a>
+      <div class="flex items-center gap-2 ml-auto">
+        <a href="https://ltmprofile.pages.dev/" target="_blank" rel="noopener noreferrer" class="px-3 py-1 rounded-full bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-slate-900 font-extrabold transition flex items-center gap-1.5 border border-emerald-500/30 text-[11px] shadow-sm">
+          <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
+          <span>Tác giả & Bản quyền: LocTM</span>
+          <i data-lucide="external-link" class="w-3 h-3 opacity-70"></i>
+        </a>
+      </div>
     </div>
   </div>
 
-  <!-- ================= NAVIGATION BAR ================= -->
-  <header class="sticky top-0 bg-white/95 backdrop-blur-md border-b border-slate-200 z-40 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+  <!-- ================= FLOATING LIQUID GLASS HEADER ================= -->
+  <header class="sticky top-2 sm:top-4 z-40 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 w-full transition-all">
+    <div class="liquid-card px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-3 shadow-lg">
+      
       <!-- Brand Logo -->
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
-          <i data-lucide="sparkles" class="w-6 h-6"></i>
+        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-white shadow-md shadow-brand-500/25">
+          <i data-lucide="sparkles" class="w-5 h-5 sm:w-6 sm:h-6"></i>
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <span class="text-xl font-extrabold tracking-tight text-slate-900">BẾP GỌN <span class="text-brand-600">AI</span></span>
-            <span class="text-[10px] px-1.5 py-0.5 rounded font-bold bg-brand-100 text-brand-800 border border-brand-200">Official</span>
+            <span class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900">BẾP GỌN <span class="text-brand-600">AI</span></span>
+            <span class="text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200">iOS Edition</span>
           </div>
-          <p class="text-[11px] text-slate-500 font-medium hidden sm:block">Smart Food, Smart Living – Bản quyền thuộc về <a href="https://ltmprofile.pages.dev/" target="_blank" class="text-brand-600 font-bold hover:underline">LocTM</a></p>
+          <p class="text-[11px] text-slate-500 font-medium hidden sm:block">Smart Food, Smart Living – Bản quyền <a href="https://ltmprofile.pages.dev/" target="_blank" class="text-brand-600 font-bold hover:underline">LocTM</a></p>
         </div>
       </div>
 
-      <!-- Center: Role Mode Switcher (Customer vs Kitchen Admin) -->
-      <div class="bg-slate-100 p-1 rounded-xl flex items-center border border-slate-200">
-        <button id="btn-mode-customer" onclick="switchViewMode('customer')" class="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm bg-white text-slate-900 border border-slate-200/80">
+      <!-- Center: iOS Segmented Control (Role Switcher) -->
+      <div class="ios-segmented-control hidden sm:inline-flex">
+        <button id="btn-mode-customer" onclick="switchViewMode('customer')" class="ios-segmented-btn active">
           <i data-lucide="utensils" class="w-3.5 h-3.5 text-brand-600"></i>
           <span>Khách Hàng Đặt Món</span>
         </button>
-        <button id="btn-mode-admin" onclick="switchViewMode('admin')" class="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-slate-800">
+        <button id="btn-mode-admin" onclick="switchViewMode('admin')" class="ios-segmented-btn">
           <i data-lucide="chef-hat" class="w-3.5 h-3.5"></i>
-          <span>Bếp Điều Hành & Quản Trị</span>
+          <span>Bếp & Quản Trị</span>
         </button>
       </div>
 
-      <!-- Right: Cart & Profile -->
-      <div class="flex items-center gap-2.5">
-        <a href="https://ltmprofile.pages.dev/" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">
+      <!-- Right: Action Buttons -->
+      <div class="flex items-center gap-2">
+        <a href="https://ltmprofile.pages.dev/" target="_blank" rel="noopener noreferrer" class="btn-ios-glass hidden lg:inline-flex text-xs">
           <i data-lucide="globe" class="w-4 h-4 text-brand-600"></i>
           <span>Hồ Sơ LocTM</span>
         </a>
-        <button onclick="toggleCartDrawer()" class="relative p-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white transition flex items-center gap-2 shadow-md shadow-brand-500/20">
-          <i data-lucide="shopping-bag" class="w-5 h-5"></i>
-          <span class="hidden md:inline text-xs font-extrabold">Giỏ hàng</span>
-          <span id="cart-badge" class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-black h-5 w-5 rounded-full flex items-center justify-center border-2 border-white">0</span>
+
+        <!-- Cart Trigger Pill -->
+        <button onclick="toggleCartDrawer()" class="relative btn-ios-primary text-xs px-4 py-2 sm:py-2.5">
+          <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Giỏ hàng</span>
+          <span id="cart-badge" class="ml-1 bg-white text-brand-700 text-[10px] font-black h-5 w-5 rounded-full flex items-center justify-center shadow-sm">0</span>
         </button>
       </div>
     </div>
   </header>
 
   <!-- ================= DYNAMIC PRICING BANNER ================= -->
-  <div id="dynamic-pricing-banner" class="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white py-2 px-4 shadow-inner text-xs font-medium flex items-center justify-between">
-    <div class="max-w-7xl mx-auto w-full flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <i data-lucide="zap" class="w-4 h-4 animate-bounce"></i>
+  <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-3 relative z-30">
+    <div class="liquid-card px-4 py-2.5 bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-emerald-500/15 border border-amber-200/60 flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2 text-amber-900 font-bold">
+        <i data-lucide="zap" class="w-4 h-4 text-amber-600 animate-pulse"></i>
         <span id="pricing-slot-text">Đang cập nhật AI Dynamic Pricing...</span>
       </div>
-      <div class="hidden sm:flex items-center gap-2 text-amber-100 text-[11px]">
-        <span>Chống lãng phí thực phẩm & Tối ưu theo khung giờ đặt</span>
-      </div>
+      <span class="hidden md:inline text-[11px] text-slate-500 font-medium">Giảm tồn kho & Tối ưu giờ thấp điểm</span>
     </div>
   </div>
 
   <!-- ================= MAIN CONTENT WRAPPER ================= -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full">
+  <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-5 flex-1 w-full relative z-30">
 
     <!-- ========================================================================= -->
     <!-- VIEW 1: GIAO DIỆN KHÁCH HÀNG (CUSTOMER APP) -->
     <!-- ========================================================================= -->
     <div id="view-customer" class="space-y-6">
       
-      <!-- Sub-Navigation for Customer -->
-      <div class="flex items-center justify-between border-b border-slate-200 pb-3 flex-wrap gap-2">
-        <div class="flex items-center gap-2 overflow-x-auto">
-          <button onclick="switchCustomerTab('menu')" id="btn-cust-tab-menu" class="cust-tab-btn active px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-brand-600 text-white shadow-sm shadow-brand-500/20">
-            <i data-lucide="layout-grid" class="w-4 h-4"></i>
-            <span>Thực Đơn Món Ăn</span>
+      <!-- Sub-Navigation Pill Tabs -->
+      <div class="flex items-center justify-between border-b border-slate-200/60 pb-3 flex-wrap gap-2">
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
+          <button onclick="switchCustomerTab('menu')" id="btn-cust-tab-menu" class="ios-chip active">
+            <span class="flex items-center gap-1.5"><i data-lucide="layout-grid" class="w-3.5 h-3.5"></i> Thực Đơn Món Ăn</span>
           </button>
-          <button onclick="switchCustomerTab('ai-wizard')" id="btn-cust-tab-ai-wizard" class="cust-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700">
-            <i data-lucide="sparkles" class="w-4 h-4 text-brand-600"></i>
-            <span>AI Tư Vấn Dinh Dưỡng</span>
+          <button onclick="switchCustomerTab('ai-wizard')" id="btn-cust-tab-ai-wizard" class="ios-chip">
+            <span class="flex items-center gap-1.5"><i data-lucide="sparkles" class="w-3.5 h-3.5 text-brand-600"></i> AI Tư Vấn Dinh Dưỡng</span>
           </button>
-          <button onclick="switchCustomerTab('ai-chat')" id="btn-cust-tab-ai-chat" class="cust-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700">
-            <i data-lucide="message-square" class="w-4 h-4 text-emerald-600"></i>
-            <span>Trợ Lý Đặt Món 24/7</span>
+          <button onclick="switchCustomerTab('ai-chat')" id="btn-cust-tab-ai-chat" class="ios-chip">
+            <span class="flex items-center gap-1.5"><i data-lucide="message-square" class="w-3.5 h-3.5 text-emerald-600"></i> Trợ Lý Đặt Món 24/7</span>
           </button>
-          <button onclick="switchCustomerTab('reviews')" id="btn-cust-tab-reviews" class="cust-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700">
-            <i data-lucide="star" class="w-4 h-4 text-amber-500"></i>
-            <span>Đánh Giá Khách Hàng</span>
+          <button onclick="switchCustomerTab('reviews')" id="btn-cust-tab-reviews" class="ios-chip">
+            <span class="flex items-center gap-1.5"><i data-lucide="star" class="w-3.5 h-3.5 text-amber-500"></i> Đánh Giá Khách Hàng</span>
           </button>
         </div>
 
-        <div class="text-xs text-slate-500 flex items-center gap-1.5">
+        <div class="text-xs text-slate-500 hidden sm:flex items-center gap-1.5">
           <i data-lucide="map-pin" class="w-3.5 h-3.5 text-rose-500"></i>
           <span>Giao nhanh tận nơi – Cơm nóng hổi trong 20 phút</span>
         </div>
       </div>
 
       <!-- 1.1 CUSTOMER TAB: MENU -->
-      <div id="cust-tab-content-menu" class="space-y-6">
-        <!-- Category Filter -->
+      <div id="cust-tab-content-menu" class="space-y-5">
+        <!-- Category Filter Chips -->
         <div class="flex items-center gap-2 overflow-x-auto pb-1">
-          <button onclick="filterMenu('all')" class="menu-filter-btn active px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-900 text-white transition">Tất cả món</button>
-          <button onclick="filterMenu('com_man')" class="menu-filter-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 transition">Cơm mặn đặc trưng</button>
-          <button onclick="filterMenu('com_chay')" class="menu-filter-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 transition">Cơm chay Healthy</button>
-          <button onclick="filterMenu('canh')" class="menu-filter-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 transition">Canh dinh dưỡng</button>
-          <button onclick="filterMenu('nuoc')" class="menu-filter-btn px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 transition">Nước mát & Sữa bắp</button>
+          <button onclick="filterMenu('all')" class="menu-filter-btn ios-chip active">Tất cả món</button>
+          <button onclick="filterMenu('com_man')" class="menu-filter-btn ios-chip">Cơm mặn đặc trưng</button>
+          <button onclick="filterMenu('com_chay')" class="menu-filter-btn ios-chip">Cơm chay Healthy</button>
+          <button onclick="filterMenu('canh')" class="menu-filter-btn ios-chip">Canh dinh dưỡng</button>
+          <button onclick="filterMenu('nuoc')" class="menu-filter-btn ios-chip">Nước mát & Sữa bắp</button>
         </div>
 
         <!-- Menu Cards Grid -->
-        <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div class="col-span-full py-12 text-center text-slate-400">
+        <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+          <div class="col-span-full py-16 text-center text-slate-400">
             <i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto mb-2 text-brand-600"></i>
             Đang tải thực đơn Bếp Gọn...
           </div>
@@ -187,28 +178,26 @@
 
       <!-- 1.2 CUSTOMER TAB: AI NUTRITION WIZARD -->
       <div id="cust-tab-content-ai-wizard" class="hidden space-y-6">
-        <div class="bg-gradient-to-br from-brand-900 via-brand-800 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
-          <div class="absolute -right-12 -top-12 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-          
+        <div class="liquid-card-dark text-white p-6 sm:p-10 relative overflow-hidden">
           <div class="max-w-2xl">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-brand-500/20 text-emerald-300 border border-emerald-500/30 mb-3">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 mb-3">
               <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
               Tư vấn thực đơn & vi chất dinh dưỡng cá nhân hóa
             </span>
-            <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">AI Đề Xuất Bữa Ăn Chuẩn Dinh Dưỡng & Ngân Sách</h2>
-            <p class="text-slate-300 text-sm mt-2">
+            <h2 class="text-2xl sm:text-3xl font-black tracking-tight">AI Đề Xuất Bữa Ăn Chuẩn Dinh Dưỡng & Ngân Sách</h2>
+            <p class="text-slate-300 text-sm mt-2 leading-relaxed">
               Khách hàng không còn đau đầu với câu hỏi <span class="italic text-emerald-300">"Trưa nay ăn gì?"</span>. AI tự động tính toán vi chất, calo và cân đối số tiền hợp lý theo ngày và theo tuần!
             </p>
           </div>
 
           <!-- Wizard Input Form -->
-          <div class="mt-8 bg-white/10 backdrop-blur-md rounded-2xl p-5 sm:p-6 border border-white/15 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="mt-8 bg-white/10 backdrop-blur-md rounded-3xl p-5 sm:p-7 border border-white/15 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Budget -->
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
                 Ngân sách mỗi bữa: <span id="wizard-budget-display" class="text-emerald-400 font-extrabold text-sm">35.000đ</span>
               </label>
-              <input type="range" id="wizard-budget" min="25000" max="60000" step="1000" value="35000" oninput="updateBudgetDisplay(this.value)" class="w-full accent-emerald-500 cursor-pointer">
+              <input type="range" id="wizard-budget" min="25000" max="60000" step="1000" value="35000" oninput="updateBudgetDisplay(this.value)" class="w-full">
               <div class="flex justify-between text-[10px] text-slate-400 mt-1">
                 <span>25k (Tiết kiệm)</span>
                 <span>40k</span>
@@ -219,7 +208,7 @@
             <!-- Goal -->
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Mục tiêu dinh dưỡng</label>
-              <select id="wizard-goal" class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-2.5 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <select id="wizard-goal" class="w-full bg-slate-800/90 text-slate-100 text-xs rounded-2xl p-3 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 <option value="balanced">Cân bằng dinh dưỡng (Mặc định)</option>
                 <option value="weight_loss">Giảm cân / Ít tinh bột & béo</option>
                 <option value="muscle_gain">Tăng cơ / Giàu đạm Protein</option>
@@ -229,16 +218,16 @@
             <!-- Dietary -->
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Chế độ ăn</label>
-              <select id="wizard-dietary" class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-2.5 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <select id="wizard-dietary" class="w-full bg-slate-800/90 text-slate-100 text-xs rounded-2xl p-3 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 <option value="all">Ăn đa dạng (Mặn & Chay)</option>
                 <option value="vegetarian">Ăn chay thanh đạm 100%</option>
               </select>
             </div>
 
-            <!-- Allergens / Dislikes -->
+            <!-- Allergens -->
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">Dị ứng / Tránh</label>
-              <select id="wizard-allergies" class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-2.5 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <select id="wizard-allergies" class="w-full bg-slate-800/90 text-slate-100 text-xs rounded-2xl p-3 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 <option value="">Không có (Ăn được tất cả)</option>
                 <option value="tiêu đen">Không ăn cay / Tránh tiêu</option>
                 <option value="hải sản">Dị ứng hải sản (cá)</option>
@@ -247,8 +236,8 @@
             </div>
 
             <!-- Submit Button -->
-            <div class="col-span-full pt-2">
-              <button onclick="generateAIRecommendation()" id="btn-run-wizard" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-900 font-extrabold text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/30">
+            <div class="col-span-full pt-3">
+              <button onclick="generateAIRecommendation()" id="btn-run-wizard" class="w-full sm:w-auto btn-ios-primary text-xs px-8 py-3.5">
                 <i data-lucide="cpu" class="w-4 h-4"></i>
                 <span>AI PHÂN TÍCH & TẠO THỰC ĐƠN NGAY</span>
               </button>
@@ -258,9 +247,9 @@
 
         <!-- Wizard Results Container -->
         <div id="wizard-results" class="hidden space-y-6">
-          <div id="wizard-best-dish" class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col md:flex-row items-center gap-6"></div>
+          <div id="wizard-best-dish" class="liquid-card p-6 flex flex-col md:flex-row items-center gap-6"></div>
 
-          <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <div class="liquid-card p-6 space-y-4">
             <div class="flex items-center justify-between flex-wrap gap-2">
               <div>
                 <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
@@ -275,7 +264,7 @@
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr class="border-b border-slate-200 bg-slate-50 text-slate-600 font-bold">
+                  <tr class="border-b border-slate-200/80 bg-slate-50/70 text-slate-600 font-bold">
                     <th class="py-3 px-3">Thứ</th>
                     <th class="py-3 px-3">Món ăn đề xuất</th>
                     <th class="py-3 px-3">Calo</th>
@@ -293,11 +282,11 @@
 
       <!-- 1.3 CUSTOMER TAB: AI CHAT ASSISTANT -->
       <div id="cust-tab-content-ai-chat" class="hidden space-y-4">
-        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-[600px]">
+        <div class="liquid-card overflow-hidden flex flex-col h-[620px]">
           <!-- Chat Header -->
-          <div class="p-4 bg-slate-900 text-white flex items-center justify-between">
+          <div class="p-4 bg-slate-900/95 text-white flex items-center justify-between border-b border-white/10">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-slate-900 font-extrabold">
+              <div class="w-10 h-10 rounded-2xl bg-emerald-500 flex items-center justify-center text-slate-900 font-extrabold shadow-md">
                 <i data-lucide="bot" class="w-6 h-6"></i>
               </div>
               <div>
@@ -308,15 +297,15 @@
                 <p class="text-[11px] text-slate-400">Hiểu ngôn ngữ tự nhiên, tự động gợi ý món và hỗ trợ lên đơn trực tiếp</p>
               </div>
             </div>
-            <button onclick="clearChat()" class="text-xs text-slate-400 hover:text-white transition">Làm mới hội thoại</button>
+            <button onclick="clearChat()" class="text-xs text-slate-400 hover:text-white transition">Làm mới</button>
           </div>
 
           <!-- Chat Messages Area -->
-          <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50">
+          <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50/50">
             <div class="flex items-start gap-3">
-              <div class="w-8 h-8 rounded-full bg-brand-600 text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">AI</div>
-              <div class="bg-white p-3.5 rounded-2xl rounded-tl-none border border-slate-200 text-xs leading-relaxed max-w-lg shadow-sm">
-                Xin chào bạn! Mình là AI Trợ lý Bếp Gọn. Bạn có thể nhắn tự nhiên yêu cầu ăn uống:
+              <div class="w-8 h-8 rounded-xl bg-brand-600 text-white flex items-center justify-center flex-shrink-0 text-xs font-bold shadow-sm">AI</div>
+              <div class="liquid-card p-4 rounded-2xl rounded-tl-none text-xs leading-relaxed max-w-lg shadow-sm">
+                Xin chào bạn! Mình là AI Trợ lý Bếp Gọn. Bạn có thể nhắn tự nhiên:
                 <div class="mt-2 space-y-1 text-slate-600 italic">
                   <div>• "Hôm nay có món gì dưới 35 nghìn không cay?"</div>
                   <div>• "Đặt giúp tôi 2 suất cơm gà áp chảo và 1 trà bí đao"</div>
@@ -328,17 +317,17 @@
           </div>
 
           <!-- Quick Prompts Pills -->
-          <div class="px-4 py-2 bg-white border-t border-slate-100 flex items-center gap-2 overflow-x-auto text-[11px]">
+          <div class="px-4 py-2 bg-white/70 border-t border-slate-100 flex items-center gap-2 overflow-x-auto text-[11px]">
             <span class="text-slate-400 flex-shrink-0 font-medium">Gợi ý nhanh:</span>
-            <button onclick="sendQuickPrompt('Hôm nay có món gì dưới 35k không cay?')" class="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 whitespace-nowrap">Cơm dưới 35k không cay</button>
-            <button onclick="sendQuickPrompt('Tôi muốn ăn chay thanh đạm')" class="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 whitespace-nowrap">Thực đơn chay</button>
-            <button onclick="sendQuickPrompt('Đặt giúp tôi 2 cơm gà áp chảo và 1 trà bí đao')" class="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 whitespace-nowrap">Đặt 2 cơm gà + 1 trà bí đao</button>
+            <button onclick="sendQuickPrompt('Hôm nay có món gì dưới 35k không cay?')" class="ios-chip text-[11px] py-1 px-3">Cơm dưới 35k không cay</button>
+            <button onclick="sendQuickPrompt('Tôi muốn ăn chay thanh đạm')" class="ios-chip text-[11px] py-1 px-3">Thực đơn chay</button>
+            <button onclick="sendQuickPrompt('Đặt giúp tôi 2 cơm gà áp chảo và 1 trà bí đao')" class="ios-chip text-[11px] py-1 px-3">Đặt 2 cơm gà + 1 trà bí đao</button>
           </div>
 
           <!-- Chat Input -->
-          <div class="p-3 bg-white border-t border-slate-200 flex items-center gap-2">
-            <input type="text" id="chat-input" onkeydown="handleChatKey(event)" placeholder="Nhập yêu cầu món ăn (vd: cơm sườn không cay, cơm dưới 30k...)" class="flex-1 bg-slate-100 text-xs rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500">
-            <button onclick="sendChatMessage()" class="p-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white transition flex items-center justify-center">
+          <div class="p-3 bg-white/90 border-t border-slate-200/60 flex items-center gap-2">
+            <input type="text" id="chat-input" onkeydown="handleChatKey(event)" placeholder="Nhập yêu cầu món ăn (vd: cơm sườn không cay, cơm dưới 30k...)" class="ios-input flex-1">
+            <button onclick="sendChatMessage()" class="btn-ios-primary p-3 rounded-2xl">
               <i data-lucide="send" class="w-4 h-4"></i>
             </button>
           </div>
@@ -348,7 +337,7 @@
       <!-- 1.4 CUSTOMER TAB: REVIEWS -->
       <div id="cust-tab-content-reviews" class="hidden space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <div class="liquid-card p-6 space-y-4">
             <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
               <i data-lucide="message-circle" class="w-4 h-4 text-brand-600"></i>
               <span>Gửi Đánh Giá Của Bạn</span>
@@ -358,7 +347,7 @@
             <div class="space-y-3">
               <div>
                 <label class="block text-xs font-bold text-slate-600 mb-1">Họ và tên:</label>
-                <input type="text" id="review-name" placeholder="Nguyễn Văn A" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-500">
+                <input type="text" id="review-name" placeholder="Nguyễn Văn A" class="ios-input w-full">
               </div>
 
               <div>
@@ -374,22 +363,22 @@
 
               <div>
                 <label class="block text-xs font-bold text-slate-600 mb-1">Nhận xét chi tiết:</label>
-                <textarea id="review-comment" rows="3" placeholder="Chia sẻ cảm nhận về khẩu vị món ăn, độ nóng, tốc độ giao hàng..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-500"></textarea>
+                <textarea id="review-comment" rows="3" placeholder="Chia sẻ cảm nhận về khẩu vị món ăn, độ nóng, tốc độ giao hàng..." class="ios-input w-full"></textarea>
               </div>
 
-              <button onclick="submitReview()" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs transition">
+              <button onclick="submitReview()" class="btn-ios-primary w-full py-3 text-xs">
                 GỬI PHẢN HỒI ĐẾN BẾP
               </button>
             </div>
           </div>
 
-          <div class="col-span-2 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <div class="col-span-2 liquid-card p-6 space-y-4">
             <div class="flex items-center justify-between">
               <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
                 <i data-lucide="award" class="w-4 h-4 text-amber-500"></i>
                 <span>Phản Hồi Từ Khách Hàng Thực Tế</span>
               </h3>
-              <div id="review-summary-badge" class="text-xs px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold">
+              <div id="review-summary-badge" class="text-xs px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-200">
                 ⭐ 4.8 / 5.0 (92% Tích cực)
               </div>
             </div>
@@ -408,7 +397,7 @@
       
       <!-- Top KPI Stats -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div class="liquid-card p-5 flex items-center gap-4">
           <div class="w-12 h-12 rounded-2xl bg-brand-100 text-brand-700 flex items-center justify-center">
             <i data-lucide="receipt" class="w-6 h-6"></i>
           </div>
@@ -419,7 +408,7 @@
           </div>
         </div>
 
-        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div class="liquid-card p-5 flex items-center gap-4">
           <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center">
             <i data-lucide="coins" class="w-6 h-6"></i>
           </div>
@@ -430,7 +419,7 @@
           </div>
         </div>
 
-        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div class="liquid-card p-5 flex items-center gap-4">
           <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center">
             <i data-lucide="trending-down" class="w-6 h-6"></i>
           </div>
@@ -441,7 +430,7 @@
           </div>
         </div>
 
-        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div class="liquid-card p-5 flex items-center gap-4">
           <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center">
             <i data-lucide="heart" class="w-6 h-6"></i>
           </div>
@@ -454,32 +443,27 @@
       </div>
 
       <!-- Admin Sub-Navigation Tabs -->
-      <div class="flex items-center gap-2 overflow-x-auto border-b border-slate-200 pb-3">
-        <button onclick="switchAdminTab('forecast')" id="btn-adm-tab-forecast" class="adm-tab-btn active px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-900 text-white shadow-sm">
-          <i data-lucide="line-chart" class="w-4 h-4 text-emerald-400"></i>
-          <span>Dự Báo Nhu Cầu & Nhập Hàng</span>
+      <div class="flex items-center gap-2 overflow-x-auto border-b border-slate-200/80 pb-3">
+        <button onclick="switchAdminTab('forecast')" id="btn-adm-tab-forecast" class="ios-chip active">
+          <span class="flex items-center gap-1.5"><i data-lucide="line-chart" class="w-4 h-4 text-emerald-400"></i> Dự Báo Nhu Cầu & Nhập Hàng</span>
         </button>
-        <button onclick="switchAdminTab('kanban')" id="btn-adm-tab-kanban" class="adm-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700">
-          <i data-lucide="clipboard-list" class="w-4 h-4"></i>
-          <span>Bếp Điều Hành (Kanban Live)</span>
+        <button onclick="switchAdminTab('kanban')" id="btn-adm-tab-kanban" class="ios-chip">
+          <span class="flex items-center gap-1.5"><i data-lucide="clipboard-list" class="w-4 h-4"></i> Bếp Điều Hành (Kanban Live)</span>
         </button>
-        <button onclick="switchAdminTab('inventory')" id="btn-adm-tab-inventory" class="adm-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700">
-          <i data-lucide="boxes" class="w-4 h-4 text-amber-500"></i>
-          <span>Kho & Giám Sát FIFO Hạn Dùng</span>
+        <button onclick="switchAdminTab('inventory')" id="btn-adm-tab-inventory" class="ios-chip">
+          <span class="flex items-center gap-1.5"><i data-lucide="boxes" class="w-4 h-4 text-amber-500"></i> Kho & Giám Sát FIFO Hạn Dùng</span>
         </button>
-        <button onclick="switchAdminTab('simulation')" id="btn-adm-tab-simulation" class="adm-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700">
-          <i data-lucide="sliders" class="w-4 h-4 text-indigo-500"></i>
-          <span>Báo Cáo Tài Chính & Phân Tích Rủi Ro</span>
+        <button onclick="switchAdminTab('simulation')" id="btn-adm-tab-simulation" class="ios-chip">
+          <span class="flex items-center gap-1.5"><i data-lucide="sliders" class="w-4 h-4 text-indigo-500"></i> Báo Cáo Tài Chính & Phân Tích Rủi Ro</span>
         </button>
-        <button onclick="switchAdminTab('sentiment-insights')" id="btn-adm-tab-sentiment-insights" class="adm-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700">
-          <i data-lucide="pie-chart" class="w-4 h-4 text-rose-500"></i>
-          <span>Phân Tích Cảm Xúc & Thấu Cảm</span>
+        <button onclick="switchAdminTab('sentiment-insights')" id="btn-adm-tab-sentiment-insights" class="ios-chip">
+          <span class="flex items-center gap-1.5"><i data-lucide="pie-chart" class="w-4 h-4 text-rose-500"></i> Phân Tích Cảm Xúc & Thấu Cảm</span>
         </button>
       </div>
 
       <!-- 2.1 ADMIN TAB: DEMAND FORECAST & BOM PURCHASING -->
       <div id="adm-tab-content-forecast" class="space-y-6">
-        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+        <div class="liquid-card p-6 space-y-4">
           <div class="flex items-center justify-between flex-wrap gap-2">
             <div>
               <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 mb-1">
@@ -488,7 +472,7 @@
               </span>
               <h3 class="text-lg font-extrabold text-slate-900">Dự Báo Suất Ăn & Tự Động Lập Kế Hoạch Đi Chợ</h3>
             </div>
-            <button onclick="runDemandForecast()" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs transition flex items-center gap-2 shadow-md shadow-brand-500/20">
+            <button onclick="runDemandForecast()" class="btn-ios-primary text-xs px-5 py-2.5">
               <i data-lucide="refresh-cw" class="w-4 h-4"></i>
               <span>TÍNH TOÁN DỰ BÁO NGAY</span>
             </button>
@@ -497,7 +481,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Thời tiết khu vực:</label>
-              <select id="forecast-weather" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-medium focus:ring-2 focus:ring-brand-500">
+              <select id="forecast-weather" class="ios-input w-full">
                 <option value="sunny">☀️ Nắng ráo (Khách hàng đi lại bình thường)</option>
                 <option value="rainy">🌧️ Trời mưa to (Nhu cầu giao tận nơi tăng +25%)</option>
                 <option value="hot">🔥 Nắng gắt oi bức (Nước mát & sữa bắp tăng +40%)</option>
@@ -506,7 +490,7 @@
 
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Sự kiện & Ngày đặc biệt:</label>
-              <select id="forecast-event" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-medium focus:ring-2 focus:ring-brand-500">
+              <select id="forecast-event" class="ios-input w-full">
                 <option value="regular">📚 Ngày làm việc & học tập bình thường</option>
                 <option value="exam_season">✍️ Mùa cao điểm / Ôn thi (Nhu cầu suất ăn tăng +20%)</option>
                 <option value="weekend_holiday">🏖️ Cuối tuần / Ngày lễ (Nhu cầu giảm -45%)</option>
@@ -516,12 +500,12 @@
 
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Quy mô khách hàng tiềm năng:</label>
-              <input type="number" id="forecast-students" value="1200" step="100" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-medium focus:ring-2 focus:ring-brand-500">
+              <input type="number" id="forecast-students" value="1200" step="100" class="ios-input w-full">
             </div>
           </div>
         </div>
 
-        <div id="forecast-insights-box" class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-xs text-amber-900 space-y-1">
+        <div id="forecast-insights-box" class="liquid-card p-4 bg-amber-50/70 border-amber-200/80 text-xs text-amber-900 space-y-1">
           <div class="font-bold flex items-center gap-2">
             <i data-lucide="info" class="w-4 h-4 text-amber-600"></i>
             <span>Nhận Định Hoạch Định Từ AI:</span>
@@ -530,14 +514,14 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div class="lg:col-span-2 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <div class="lg:col-span-2 liquid-card p-6 space-y-4">
             <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Biểu đồ số suất dự báo theo từng món ăn</h4>
             <div class="h-64">
               <canvas id="forecastChart"></canvas>
             </div>
           </div>
 
-          <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <div class="liquid-card p-6 space-y-4">
             <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Dự phóng Doanh thu & Chi phí ngày mai</h4>
             <div class="space-y-3 pt-2">
               <div class="flex justify-between items-center text-xs pb-2 border-b border-slate-100">
@@ -565,7 +549,7 @@
         </div>
 
         <!-- BOM Grocery Shopping List with Approve Button -->
-        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+        <div class="liquid-card p-6 space-y-4">
           <div class="flex items-center justify-between flex-wrap gap-3">
             <div>
               <h4 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
@@ -576,11 +560,10 @@
             </div>
             
             <div class="flex items-center gap-3">
-              <div id="bom-total-buy-cost" class="text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl">
+              <div id="bom-total-buy-cost" class="text-xs font-bold text-slate-700 bg-slate-100/80 px-3 py-1.5 rounded-xl border border-slate-200/60">
                 Tổng tiền đi chợ: <span class="text-rose-600 font-extrabold text-sm">0đ</span>
               </div>
-              <!-- Real Action Button to Auto-Restock -->
-              <button onclick="approveGroceryList()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs transition flex items-center gap-1.5 shadow-md shadow-emerald-500/20">
+              <button onclick="approveGroceryList()" class="btn-ios-primary text-xs py-2 px-4">
                 <i data-lucide="check-check" class="w-4 h-4"></i>
                 <span>Duyệt Nhập Kho Tự Động</span>
               </button>
@@ -590,7 +573,7 @@
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs border-collapse">
               <thead>
-                <tr class="border-b border-slate-200 bg-slate-50 text-slate-600 font-bold">
+                <tr class="border-b border-slate-200/80 bg-slate-50/70 text-slate-600 font-bold">
                   <th class="py-3 px-3">Nguyên liệu</th>
                   <th class="py-3 px-3">Cần cho nấu</th>
                   <th class="py-3 px-3">Tồn kho hiện có</th>
@@ -621,7 +604,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <!-- Column 1: Pending -->
-          <div class="bg-slate-100/70 p-4 rounded-3xl border border-slate-200/80 space-y-3">
+          <div class="liquid-card p-4 space-y-3 bg-amber-50/40 border-amber-200/50">
             <div class="flex items-center justify-between text-xs font-extrabold text-amber-700 uppercase tracking-wider">
               <span>Chờ xác nhận</span>
               <span id="kanban-count-pending" class="px-2 py-0.5 rounded-full bg-amber-200 text-amber-800">0</span>
@@ -630,7 +613,7 @@
           </div>
 
           <!-- Column 2: Cooking -->
-          <div class="bg-slate-100/70 p-4 rounded-3xl border border-slate-200/80 space-y-3">
+          <div class="liquid-card p-4 space-y-3 bg-blue-50/40 border-blue-200/50">
             <div class="flex items-center justify-between text-xs font-extrabold text-blue-700 uppercase tracking-wider">
               <span>Đang nấu tại bếp</span>
               <span id="kanban-count-cooking" class="px-2 py-0.5 rounded-full bg-blue-200 text-blue-800">0</span>
@@ -639,7 +622,7 @@
           </div>
 
           <!-- Column 3: Delivering -->
-          <div class="bg-slate-100/70 p-4 rounded-3xl border border-slate-200/80 space-y-3">
+          <div class="liquid-card p-4 space-y-3 bg-purple-50/40 border-purple-200/50">
             <div class="flex items-center justify-between text-xs font-extrabold text-purple-700 uppercase tracking-wider">
               <span>Đang giao hàng</span>
               <span id="kanban-count-delivering" class="px-2 py-0.5 rounded-full bg-purple-200 text-purple-800">0</span>
@@ -648,7 +631,7 @@
           </div>
 
           <!-- Column 4: Completed -->
-          <div class="bg-slate-100/70 p-4 rounded-3xl border border-slate-200/80 space-y-3">
+          <div class="liquid-card p-4 space-y-3 bg-emerald-50/40 border-emerald-200/50">
             <div class="flex items-center justify-between text-xs font-extrabold text-emerald-700 uppercase tracking-wider">
               <span>Đã hoàn thành</span>
               <span id="kanban-count-completed" class="px-2 py-0.5 rounded-full bg-emerald-200 text-emerald-800">0</span>
@@ -660,7 +643,7 @@
 
       <!-- 2.3 ADMIN TAB: INVENTORY & FIFO MONITOR -->
       <div id="adm-tab-content-inventory" class="hidden space-y-6">
-        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+        <div class="liquid-card p-6 space-y-4">
           <div class="flex items-center justify-between flex-wrap gap-2">
             <div>
               <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200 mb-1">
@@ -677,7 +660,7 @@
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs border-collapse">
               <thead>
-                <tr class="border-b border-slate-200 bg-slate-50 text-slate-600 font-bold">
+                <tr class="border-b border-slate-200/80 bg-slate-50/70 text-slate-600 font-bold">
                   <th class="py-3 px-3">Tên nguyên liệu</th>
                   <th class="py-3 px-3">Tồn kho hiện tại</th>
                   <th class="py-3 px-3">Mức tối thiểu</th>
@@ -695,26 +678,26 @@
 
       <!-- 2.4 ADMIN TAB: FINANCIAL REPORT & RISK ANALYSIS -->
       <div id="adm-tab-content-simulation" class="hidden space-y-6">
-        <div class="bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl">
+        <div class="liquid-card-dark text-white p-6 sm:p-10">
           <div class="max-w-2xl">
             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 mb-2">
               <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
               Báo cáo tài chính & Kiểm soát rủi ro vận hành
             </span>
             <h2 class="text-2xl font-extrabold tracking-tight">Phân Tích Điểm Hòa Vốn & Lợi Nhuận Hoạt Động</h2>
-            <p class="text-slate-300 text-xs mt-2">
+            <p class="text-slate-300 text-xs mt-2 leading-relaxed">
               Đánh giá sức khỏe tài chính của bếp với các biến số rủi ro: <span class="text-amber-400 font-bold">Biến động lượng khách</span> và <span class="text-rose-400 font-bold">Biến động giá nguyên liệu đầu vào</span>.
             </p>
           </div>
 
           <!-- Simulation Sliders -->
-          <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/10">
+          <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/10">
             <div>
               <div class="flex justify-between text-xs font-bold mb-2">
                 <span class="text-slate-300">Biến số: Doanh số sụt giảm:</span>
                 <span id="sim-sales-drop-val" class="text-rose-400 font-extrabold">0%</span>
               </div>
-              <input type="range" id="sim-sales-drop" min="0" max="50" step="5" value="0" oninput="updateSimSliderVal('sales-drop', this.value)" class="w-full accent-rose-500 cursor-pointer">
+              <input type="range" id="sim-sales-drop" min="0" max="50" step="5" value="0" oninput="updateSimSliderVal('sales-drop', this.value)" class="w-full">
               <span class="text-[10px] text-slate-400">Ví dụ: Mùa mưa bão, kỳ nghỉ dài ngày</span>
             </div>
 
@@ -723,7 +706,7 @@
                 <span class="text-slate-300">Biến số: Giá nguyên liệu tăng:</span>
                 <span id="sim-meat-price-val" class="text-amber-400 font-extrabold">0%</span>
               </div>
-              <input type="range" id="sim-meat-price" min="0" max="40" step="5" value="0" oninput="updateSimSliderVal('meat-price', this.value)" class="w-full accent-amber-500 cursor-pointer">
+              <input type="range" id="sim-meat-price" min="0" max="40" step="5" value="0" oninput="updateSimSliderVal('meat-price', this.value)" class="w-full">
               <span class="text-[10px] text-slate-400">Ví dụ: Biến động giá thịt, rau củ thị trường</span>
             </div>
 
@@ -732,12 +715,12 @@
                 <span class="text-slate-300">Công suất phục vụ mục tiêu:</span>
                 <span id="sim-meals-target-val" class="text-emerald-400 font-extrabold">150 suất/ngày</span>
               </div>
-              <input type="range" id="sim-meals-target" min="50" max="300" step="10" value="150" oninput="updateSimSliderVal('meals-target', this.value)" class="w-full accent-emerald-500 cursor-pointer">
+              <input type="range" id="sim-meals-target" min="50" max="300" step="10" value="150" oninput="updateSimSliderVal('meals-target', this.value)" class="w-full">
               <span class="text-[10px] text-slate-400">Công suất thiết kế của bếp: 300 suất</span>
             </div>
 
             <div class="col-span-full">
-              <button onclick="runFinancialSimulation()" class="px-6 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-extrabold text-xs transition flex items-center gap-2">
+              <button onclick="runFinancialSimulation()" class="btn-ios-primary text-xs py-3 px-6">
                 <i data-lucide="calculator" class="w-4 h-4"></i>
                 <span>TÍNH TOÁN ĐIỂM HÒA VỐN & LỢI NHUẬN RÒNG</span>
               </button>
@@ -746,20 +729,20 @@
         </div>
 
         <div id="sim-results" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
-        <div id="sim-action-plan-box" class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-3"></div>
+        <div id="sim-action-plan-box" class="liquid-card p-6 space-y-3"></div>
       </div>
 
       <!-- 2.5 ADMIN TAB: SENTIMENT & INSIGHTS -->
       <div id="adm-tab-content-sentiment-insights" class="hidden space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <div class="liquid-card p-6 space-y-4">
             <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Phân bổ cảm xúc khách hàng (AI Sentiment)</h4>
             <div class="h-64 flex items-center justify-center">
               <canvas id="sentimentChart"></canvas>
             </div>
           </div>
 
-          <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <div class="liquid-card p-6 space-y-4">
             <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Đề xuất cải tiến chất lượng từ AI</h4>
             <div id="sentiment-insights-container" class="space-y-3 text-xs"></div>
           </div>
@@ -770,29 +753,49 @@
 
   </main>
 
+  <!-- ================= MOBILE LIQUID GLASS BOTTOM DOCK (For Phones) ================= -->
+  <nav class="mobile-glass-dock sm:hidden">
+    <button onclick="mobileNav('menu')" id="mob-btn-menu" class="mobile-dock-btn active">
+      <i data-lucide="layout-grid" class="w-4 h-4"></i>
+      <span>Món ăn</span>
+    </button>
+    <button onclick="mobileNav('ai-wizard')" id="mob-btn-wizard" class="mobile-dock-btn">
+      <i data-lucide="sparkles" class="w-4 h-4"></i>
+      <span>AI Vi chất</span>
+    </button>
+    <button onclick="mobileNav('ai-chat')" id="mob-btn-chat" class="mobile-dock-btn">
+      <i data-lucide="message-square" class="w-4 h-4"></i>
+      <span>Trợ lý</span>
+    </button>
+    <button onclick="toggleCartDrawer()" class="mobile-dock-btn relative">
+      <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+      <span>Giỏ</span>
+      <span id="mob-cart-badge" class="absolute 0 right-2 bg-rose-500 text-white text-[9px] font-black h-4 w-4 rounded-full flex items-center justify-center">0</span>
+    </button>
+    <button onclick="toggleMobileRole()" id="mob-btn-role" class="mobile-dock-btn">
+      <i data-lucide="chef-hat" class="w-4 h-4"></i>
+      <span>Quản trị</span>
+    </button>
+  </nav>
+
   <!-- ================= SHOPPING CART DRAWER ================= -->
   <div id="cart-drawer-overlay" onclick="toggleCartDrawer()" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden transition-opacity"></div>
-  <div id="cart-drawer" class="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white z-50 shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300">
-    <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+  <div id="cart-drawer" class="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white/95 backdrop-blur-2xl z-50 shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 rounded-l-3xl border-l border-white/50">
+    <div class="p-4 border-b border-slate-100 flex items-center justify-between">
       <div class="flex items-center gap-2">
         <i data-lucide="shopping-bag" class="w-5 h-5 text-brand-600"></i>
         <h3 class="font-extrabold text-sm text-slate-900">Giỏ Hàng Của Bạn</h3>
       </div>
-      <button onclick="toggleCartDrawer()" class="p-1.5 rounded-lg hover:bg-slate-200 text-slate-500">
+      <button onclick="toggleCartDrawer()" class="p-2 rounded-xl hover:bg-slate-100 text-slate-500 transition">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
     </div>
 
     <!-- Cart items list -->
-    <div id="cart-items-container" class="flex-1 p-4 overflow-y-auto space-y-3">
-      <div class="text-center py-12 text-slate-400 text-xs">
-        <i data-lucide="shopping-cart" class="w-10 h-10 mx-auto mb-2 opacity-30"></i>
-        Giỏ hàng đang trống. Hãy chọn món ngon từ menu nhé!
-      </div>
-    </div>
+    <div id="cart-items-container" class="flex-1 p-4 overflow-y-auto space-y-3"></div>
 
     <!-- Checkout Form in Drawer -->
-    <div class="p-4 bg-slate-50 border-t border-slate-200 space-y-3">
+    <div class="p-4 bg-slate-50/70 border-t border-slate-100 space-y-3">
       <div class="space-y-2">
         <div class="flex justify-between text-xs text-slate-600">
           <span>Tạm tính:</span>
@@ -809,19 +812,17 @@
       </div>
 
       <div class="space-y-2 pt-2 border-t border-slate-200 text-xs">
-        <input type="text" id="order-customer-name" placeholder="Họ và tên người nhận" value="Nguyễn Văn An" class="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-500">
-        <input type="text" id="order-phone" placeholder="Số điện thoại" value="0912345678" class="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-500">
-        <input type="text" id="order-address" placeholder="Địa chỉ giao hàng chi tiết" value="123 Đường 3/2, Phường Xuân Khánh, Ninh Kiều" class="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-500">
-        <div class="flex items-center gap-2">
-          <select id="order-payment" class="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-brand-500">
-            <option value="qr_code">Mã VietQR Ngân Hàng (Tự Động Sinh Mã)</option>
-            <option value="cod">Thanh toán tiền mặt khi nhận cơm (COD)</option>
-            <option value="transfer">Chuyển khoản theo số tài khoản</option>
-          </select>
-        </div>
+        <input type="text" id="order-customer-name" placeholder="Họ và tên người nhận" value="Nguyễn Văn An" class="ios-input w-full">
+        <input type="text" id="order-phone" placeholder="Số điện thoại" value="0912345678" class="ios-input w-full">
+        <input type="text" id="order-address" placeholder="Địa chỉ giao hàng chi tiết" value="123 Đường 3/2, Phường Xuân Khánh, Ninh Kiều" class="ios-input w-full">
+        <select id="order-payment" class="ios-input w-full">
+          <option value="qr_code">Mã VietQR Ngân Hàng (Tự Động Sinh Mã)</option>
+          <option value="cod">Thanh toán tiền mặt khi nhận cơm (COD)</option>
+          <option value="transfer">Chuyển khoản theo số tài khoản</option>
+        </select>
       </div>
 
-      <button onclick="submitOrder()" class="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-brand-500/25">
+      <button onclick="submitOrder()" class="btn-ios-primary w-full py-3.5 text-xs shadow-lg">
         <i data-lucide="check-circle" class="w-4 h-4"></i>
         <span>XÁC NHẬN ĐẶT CƠM NGAY</span>
       </button>
@@ -829,9 +830,9 @@
   </div>
 
   <!-- ================= VIETQR PAYMENT MODAL ================= -->
-  <div id="payment-modal-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl border border-slate-100">
-      <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+  <div id="payment-modal-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="liquid-card bg-white/95 max-w-sm w-full p-6 text-center space-y-4 shadow-2xl">
+      <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
         <i data-lucide="qr-code" class="w-6 h-6"></i>
       </div>
       
@@ -844,36 +845,33 @@
         <img id="modal-qr-image" src="" alt="Mã VietQR" class="w-56 h-56 mx-auto rounded-xl object-contain">
       </div>
 
-      <div class="bg-slate-50 p-3 rounded-xl text-xs text-left space-y-1.5 border border-slate-200">
+      <div class="bg-slate-50/80 p-3 rounded-2xl text-xs text-left space-y-1.5 border border-slate-200">
         <div class="flex justify-between"><span class="text-slate-500">Mã đơn:</span> <b id="modal-order-id" class="text-slate-900"></b></div>
         <div class="flex justify-between"><span class="text-slate-500">Số tiền:</span> <b id="modal-order-amount" class="text-brand-600 font-extrabold text-sm"></b></div>
         <div class="flex justify-between"><span class="text-slate-500">Chủ tài khoản:</span> <b class="text-slate-800">LOCTM - BEP GON AI</b></div>
         <div class="flex justify-between"><span class="text-slate-500">Ngân hàng:</span> <b class="text-slate-800">MB Bank (Quân Đội)</b></div>
       </div>
 
-      <div class="flex items-center gap-2 pt-2">
-        <button onclick="closePaymentModal()" class="flex-1 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs transition">
-          ĐÃ THANH TOÁN XONG
-        </button>
-      </div>
+      <button onclick="closePaymentModal()" class="btn-ios-primary w-full py-3 text-xs">
+        ĐÃ THANH TOÁN XONG
+      </button>
     </div>
   </div>
 
   <!-- ================= FOOTER WITH AUTHOR LOCTM ================= -->
-  <footer class="bg-white border-t border-slate-200 py-8 text-center text-xs text-slate-500">
+  <footer class="bg-white/80 backdrop-blur-md border-t border-slate-200/60 py-8 text-center text-xs text-slate-500 mt-12 relative z-30">
     <div class="max-w-7xl mx-auto px-4 space-y-4">
       <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-100 pb-6">
         <div class="text-left space-y-1">
           <div class="text-base font-extrabold text-slate-900 flex items-center gap-2">
             <span>BẾP GỌN AI</span>
-            <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">Smart Food, Smart Living</span>
+            <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-200">iOS Liquid Glass</span>
           </div>
           <p class="text-xs text-slate-500">Hệ thống Đặt Món & Quản Trị Bếp Toàn Diện Ứng Dụng Trí Tuệ Nhân Tạo</p>
         </div>
 
-        <!-- LocTM Profile Card in Footer -->
-        <a href="https://ltmprofile.pages.dev/" target="_blank" rel="noopener noreferrer" class="group flex items-center gap-3 p-3 rounded-2xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 transition text-left shadow-sm">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-white font-black text-sm">
+        <a href="https://ltmprofile.pages.dev/" target="_blank" rel="noopener noreferrer" class="group flex items-center gap-3 p-3 rounded-2xl bg-white hover:bg-emerald-50 border border-slate-200/80 hover:border-emerald-300 transition text-left shadow-sm">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-white font-black text-sm shadow-md">
             LT
           </div>
           <div>

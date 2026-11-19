@@ -175,7 +175,7 @@ function renderMenu(items) {
   container.innerHTML = items.map(dish => {
     const isDiscounted = dish.discountPercent > 0;
     return `
-      <div class="dish-card bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-sm flex flex-col justify-between group">
+      <div class="liquid-card overflow-hidden border border-slate-200/80 shadow-sm flex flex-col justify-between group">
         <div>
           <div class="relative h-48 overflow-hidden bg-slate-100">
             <img src="${dish.image}" alt="${dish.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
@@ -193,7 +193,7 @@ function renderMenu(items) {
             </div>
           </div>
 
-          <div class="p-5 space-y-3">
+          <div class="p-5 sm:p-6 space-y-3">
             <div class="flex items-start justify-between gap-2">
               <h3 class="font-extrabold text-sm text-slate-900 leading-snug group-hover:text-brand-600 transition">${dish.name}</h3>
             </div>
@@ -225,7 +225,7 @@ function renderMenu(items) {
             <span class="text-[10px] text-slate-400">Suất ăn tiêu chuẩn</span>
           </div>
 
-          <button onclick="addToCart('${dish.id}')" class="px-4 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-xs transition flex items-center gap-1.5 shadow-md shadow-brand-500/20 active:scale-95">
+          <button onclick="addToCart('${dish.id}')" class="btn-ios-primary text-xs py-2 px-4 hover:bg-brand-700 text-white font-extrabold text-xs transition flex items-center gap-1.5 shadow-md shadow-brand-500/20 active:scale-95">
             <i data-lucide="plus" class="w-4 h-4"></i>
             <span>Thêm giỏ</span>
           </button>
@@ -258,7 +258,7 @@ function saveLocalCart() {
 function updateCartBadge() {
   const badge = document.getElementById('cart-badge');
   const totalItems = state.cart.reduce((sum, i) => sum + i.quantity, 0);
-  if (badge) badge.textContent = totalItems;
+  if (badge) badge.textContent = totalItems; const mobBadge = document.getElementById('mob-cart-badge'); if (mobBadge) mobBadge.textContent = totalItems;
 }
 
 function toggleCartDrawer() {
@@ -1140,4 +1140,27 @@ function showToast(message) {
   setTimeout(() => {
     toast.classList.add('translate-y-20', 'opacity-0');
   }, 3500);
+}
+
+
+// Mobile Bottom Dock Handlers
+function mobileNav(tab) {
+  switchViewMode('customer');
+  switchCustomerTab(tab);
+  document.querySelectorAll('.mobile-dock-btn').forEach(btn => btn.classList.remove('active'));
+  const btnMap = { 'menu': 'mob-btn-menu', 'ai-wizard': 'mob-btn-wizard', 'ai-chat': 'mob-btn-chat', 'reviews': 'mob-btn-menu' };
+  const targetId = btnMap[tab] || 'mob-btn-menu';
+  document.getElementById(targetId)?.classList.add('active');
+  window.scrollTo({ top: 100, behavior: 'smooth' });
+}
+
+function toggleMobileRole() {
+  const newMode = state.currentMode === 'customer' ? 'admin' : 'customer';
+  switchViewMode(newMode);
+  document.querySelectorAll('.mobile-dock-btn').forEach(btn => btn.classList.remove('active'));
+  if (newMode === 'admin') {
+    document.getElementById('mob-btn-role')?.classList.add('active');
+  } else {
+    document.getElementById('mob-btn-menu')?.classList.add('active');
+  }
 }
