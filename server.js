@@ -192,7 +192,8 @@ app.post('/api/orders', (req, res) => {
   res.json({
     success: true,
     message: 'Đặt đơn thành công! Bếp Gọn đã nhận đơn và chuẩn bị chế biến.',
-    order: newOrder
+    order: newOrder,
+    data: newOrder
   });
 });
 
@@ -682,6 +683,7 @@ app.get('/api/ai/sentiment-analysis', (req, res) => {
     data: {
       totalReviews: total,
       avgRating: Number(avgRating),
+      sentimentScore: Number(avgRating),
       distribution: {
         positive: { count: positive, percentage: total > 0 ? Math.round(positive / total * 100) : 0 },
         neutral: { count: neutral, percentage: total > 0 ? Math.round(neutral / total * 100) : 0 },

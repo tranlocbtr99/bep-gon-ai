@@ -57,21 +57,22 @@ function switchViewMode(mode) {
   const btnAdm = document.getElementById('btn-mode-admin');
 
   if (mode === 'customer') {
-    custView.classList.remove('hidden');
-    admView.classList.add('hidden');
-    btnCust.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm bg-white text-slate-900 border border-slate-200/80';
-    btnAdm.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-slate-800';
+    custView?.classList.remove('hidden');
+    admView?.classList.add('hidden');
+    btnCust?.classList.add('active');
+    btnAdm?.classList.remove('active');
   } else {
-    custView.classList.add('hidden');
-    admView.classList.remove('hidden');
-    btnAdm.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm bg-white text-slate-900 border border-slate-200/80';
-    btnCust.className = 'flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-slate-800';
+    custView?.classList.add('hidden');
+    admView?.classList.remove('hidden');
+    btnAdm?.classList.add('active');
+    btnCust?.classList.remove('active');
     
     loadAdminOrders();
     loadInventory();
     setTimeout(() => {
       if (state.charts.forecast) state.charts.forecast.resize();
       if (state.charts.sentiment) state.charts.sentiment.resize();
+      if (state.charts.breakEven) state.charts.breakEven.resize();
     }, 100);
   }
   refreshIcons();

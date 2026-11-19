@@ -86,14 +86,14 @@
       </div>
 
       <!-- Center: iOS Segmented Control (Role Switcher) -->
-      <div class="ios-segmented-control hidden sm:inline-flex">
-        <button id="btn-mode-customer" onclick="switchViewMode('customer')" class="ios-segmented-btn active">
+      <div class="ios-segmented-control inline-flex text-xs">
+        <button id="btn-mode-customer" onclick="switchViewMode('customer')" class="ios-segmented-btn active px-2.5 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs">
           <i data-lucide="utensils" class="w-3.5 h-3.5 text-brand-600"></i>
-          <span>Khách Hàng Đặt Món</span>
+          <span>Khách Hàng<span class="hidden md:inline"> Đặt Món</span></span>
         </button>
-        <button id="btn-mode-admin" onclick="switchViewMode('admin')" class="ios-segmented-btn">
+        <button id="btn-mode-admin" onclick="switchViewMode('admin')" class="ios-segmented-btn px-2.5 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs">
           <i data-lucide="chef-hat" class="w-3.5 h-3.5"></i>
-          <span>Bếp & Quản Trị</span>
+          <span><span class="hidden md:inline">Bếp & </span>Quản Trị</span>
         </button>
       </div>
 
