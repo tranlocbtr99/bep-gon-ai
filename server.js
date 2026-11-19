@@ -359,7 +359,12 @@ app.post('/api/ai/forecast-demand', (req, res) => {
     eventNote = 'HỘI THẢO TOÀN TRƯỜNG: Có đoàn đại biểu và khách hàng tham gia, dự kiến đơn đặt theo nhóm tăng đột biến.';
   }
 
-  const combinedMultiplier = weatherMultiplier * eventMultiplier;
+  // Potential customer scale multiplier (chuẩn cơ sở là 1.200 người)
+  const studentsCount = Number(expectedStudents) || 1200;
+  const studentMultiplier = Math.max(0.2, Number((studentsCount / 1200).toFixed(3)));
+  const studentNote = `Quy mô khách tiềm năng: ${studentsCount.toLocaleString()} người (Hệ số tác động quy mô: x${studentMultiplier.toFixed(2)} so với mức chuẩn 1.200 khách).`;
+
+  const combinedMultiplier = weatherMultiplier * eventMultiplier * studentMultiplier;
 
   // Calculate forecasted quantities per menu item
   const forecastedItems = Object.entries(baseDemand).map(([dishId, baseQty]) => {
@@ -434,8 +439,8 @@ app.post('/api/ai/forecast-demand', (req, res) => {
     success: true,
     data: {
       forecastDate: date || new Date().toISOString().split('T')[0],
-      scenario: { weather, campusEvent, expectedStudents },
-      insights: [weatherNote, eventNote],
+      scenario: { weather, campusEvent, expectedStudents: studentsCount },
+      insights: [studentNote, weatherNote, eventNote],
       forecastedItems,
       metrics: {
         totalMealsForecasted: totalMeals,

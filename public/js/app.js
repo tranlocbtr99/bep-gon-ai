@@ -163,9 +163,15 @@ function openForecastFromAdmin() {
   showToast('📈 Đang mở Bảng Điều Khiển Dự Báo Nhu Cầu AI & Kế Hoạch Đi Chợ BOM');
 }
 
+let forecastDebounceTimer = null;
 function onStudentSliderChange(val) {
   const el = document.getElementById('forecast-students-val');
   if (el) el.textContent = `${Number(val).toLocaleString()} người`;
+
+  clearTimeout(forecastDebounceTimer);
+  forecastDebounceTimer = setTimeout(() => {
+    runDemandForecast();
+  }, 100);
 }
 
 // -------------------------------------------------------------------------
